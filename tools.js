@@ -45,6 +45,8 @@ var SleeperTools = (function () {
 		   });
 		   table.appendChild(tr); // Append the table row to the table
 		});
+
+		container.innerHTML = "";
 		container.appendChild(table) // Append the table to the container element
 	};
 
@@ -57,7 +59,7 @@ var SleeperTools = (function () {
 		response.forEach((item) => {
             // Get the values of the current object in the JSON data
 			jsonData.push({
-				"Username": item.username,
+				"Username": item.display_name,
 				"User ID": item.user_id
 			});
          });

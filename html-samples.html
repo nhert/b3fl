@@ -26,7 +26,6 @@
     <!-- Import tools from github -->
 
     <script>
-    
         async function a() {
             const toolsAPI = await fetch("https://raw.githubusercontent.com/nhert/b3fl/main/tools.js")
                 .then((res) => res.text());
@@ -36,12 +35,10 @@
             const leagueBUsers = await SleeperTools.getUsers(SleeperTools.B_LEAGUE_SLEEPER_ID);
 
             let container = document.getElementById("pageTableDiv");
-            
+            container.innerHTML = "";
             SleeperTools.generateTable(container, leagueBUsers);
 
-            debugger;
-
-            //for (us)
+            //debugger;
         }
 
         a();
