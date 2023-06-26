@@ -9,6 +9,7 @@ var SleeperTools = (function () {
 	tools.moduleProperty = 1;
 	tools.moduleMethod = function () {
 		// ...
+		// TEST
 	};
 
 	return tools;
