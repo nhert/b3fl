@@ -12,7 +12,7 @@ var SleeperTools = (function () {
 
 	tools.getUsers = async function (leagueId) {
 		console.log(leagueId);
-		fetch("https://api.sleeper.app/v1/league/" + leagueId)
+		return fetch("https://api.sleeper.app/v1/league/" + leagueId)
                 .then((res) => res.json());
 	};
 

@@ -13,12 +13,9 @@
             const toolsAPI = await fetch("https://raw.githubusercontent.com/nhert/b3fl/main/tools.js")
                 .then((res) => res.text());
             eval(toolsAPI); // Library Name: SleeperTools
-
-            debugger;
-
            
-            const leagueAUsers = await SleeperTools.getUsers(SleeperTools.A_LEAGUE_SLEEPER_ID);
-            const leagueBUsers = await SleeperTools.getUsers(SleeperTools.B_LEAGUE_SLEEPER_ID);
+            const leagueAUsers = SleeperTools.getUsers(SleeperTools.A_LEAGUE_SLEEPER_ID);
+            const leagueBUsers = SleeperTools.getUsers(SleeperTools.B_LEAGUE_SLEEPER_ID);
 
             document.getElementById("spanId").innerText = "\n\n" + leagueAUsers + "\n\n";
 
