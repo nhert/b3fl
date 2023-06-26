@@ -1,13 +1,16 @@
 var SleeperTools = (function () {
-	var tools = {},
-		privateVariable = 1;
+	var tools = {};
+	var privateVariable = 1;
 
 	function privateMethod() {
 		// ...
 	}
 
-	tools.moduleProperty = 1;
-	tools.moduleMethod = function () {
+	// Sleeper League IDs
+	tools.A_LEAGUE_SLEEPER_ID = "968583157932937216";
+	tools.B_LEAGUE_SLEEPER_ID = "866171664994541568";
+
+	tools.getUsername = function () {
 		// ...
 		// TEST
 	};

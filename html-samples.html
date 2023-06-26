@@ -1,0 +1,33 @@
+<!-- Wordpress Example: Custom HTML Block using B3FL github repo -->
+<html>
+
+<head></head>
+
+<body>
+    <div>Data: <span id="spanId"></span></div>
+    <!-- Import tools from github -->
+
+    <script>
+
+        async function a() {
+            // 968583157932937216 A league
+            // 866171664994541568 B league
+            const leagueAUsers = await fetch("https://api.sleeper.app/v1/league/968583157932937216")
+                .then((res) => res.json());
+            const leagueBUsers = await fetch("https://api.sleeper.app/v1/league/866171664994541568")
+                .then((res) => res.json());
+
+                const test = await fetch("https://raw.githubusercontent.com/nhert/b3fl/main/tools.js")
+                .then((res) => res.json());
+
+            document.getElementById("spanId").innerText = "[" + test + "]";
+
+            //for (us)
+        }
+
+        a();
+
+    </script>
+</body>
+
+</html>
