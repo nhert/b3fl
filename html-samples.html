@@ -36,11 +36,8 @@
             const leagueBUsers = await SleeperTools.getUsers(SleeperTools.B_LEAGUE_SLEEPER_ID);
 
             let container = document.getElementById("pageTableDiv");
-            let table = document.createElement("table");
-
-
-
-            document.getElementById("spanId").innerText = "\n\n" + leagueAUsers + "\n\n";
+            
+            SleeperTools.generateTable(container, leagueBUsers);
 
             debugger;
 
