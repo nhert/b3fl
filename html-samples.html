@@ -8,19 +8,19 @@
     <!-- Import tools from github -->
 
     <script>
-
+    
         async function a() {
-            // 968583157932937216 A league
-            // 866171664994541568 B league
-            const leagueAUsers = await fetch("https://api.sleeper.app/v1/league/968583157932937216")
-                .then((res) => res.json());
-            const leagueBUsers = await fetch("https://api.sleeper.app/v1/league/866171664994541568")
-                .then((res) => res.json());
+            const toolsAPI = await fetch("https://raw.githubusercontent.com/nhert/b3fl/main/tools.js")
+                .then((res) => res.text());
+            eval(toolsAPI); // Library Name: SleeperTools
 
-                const test = await fetch("https://raw.githubusercontent.com/nhert/b3fl/main/tools.js")
-                .then((res) => res.json());
+           
+            const leagueAUsers = SleeperTools.getUsers(SleeperTools.A_LEAGUE_SLEEPER_ID);
+            const leagueBUsers = SleeperTools.getUsers(SleeperTools.B_LEAGUE_SLEEPER_ID);
 
-            document.getElementById("spanId").innerText = "[" + test + "]";
+            document.getElementById("spanId").innerText = "\n\n" + leagueAUsers + "\n\n";
+
+            debugger;
 
             //for (us)
         }
