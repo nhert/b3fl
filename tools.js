@@ -11,8 +11,20 @@ var SleeperTools = (function () {
 	tools.B_LEAGUE_SLEEPER_ID = "866171664994541568";
 
 	tools.getUsers = async function (leagueId) {
-		return fetch(getLeagueRestAPI(leagueId) + "/users")
+		const response = await fetch(getLeagueRestAPI(leagueId) + "/users")
                 .then((res) => res.json());
+
+		let jsonData = [];
+
+		response.forEach((item) => {
+            // Get the values of the current object in the JSON data
+			jsonData.push({
+				"Username": item.username,
+				"User ID": item.user_id
+			});
+         });
+
+		return jsonData;
 	};
 
 	return tools;

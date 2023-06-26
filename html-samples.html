@@ -1,10 +1,28 @@
 <!-- Wordpress Example: Custom HTML Block using B3FL github repo -->
 <html>
 
-<head></head>
+<head>
+    <style>
+        table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+        }
+        
+        td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+        }
+        
+        tr:nth-child(even) {
+          background-color: #dddddd;
+        }
+        </style>
+</head>
 
 <body>
-    <div>Data: <span id="spanId"></span></div>
+    <div id="pageTableDiv"></div>
     <!-- Import tools from github -->
 
     <script>
@@ -14,8 +32,13 @@
                 .then((res) => res.text());
             eval(toolsAPI); // Library Name: SleeperTools
            
-            const leagueAUsers = await SleeperTools.getUsers(SleeperTools.A_LEAGUE_SLEEPER_ID);
+            //const leagueAUsers = await SleeperTools.getUsers(SleeperTools.A_LEAGUE_SLEEPER_ID);
             const leagueBUsers = await SleeperTools.getUsers(SleeperTools.B_LEAGUE_SLEEPER_ID);
+
+            let container = document.getElementById("pageTableDiv");
+            let table = document.createElement("table");
+
+
 
             document.getElementById("spanId").innerText = "\n\n" + leagueAUsers + "\n\n";
 
