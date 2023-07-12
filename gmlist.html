@@ -4,23 +4,23 @@
     <div id="pageTableDiv"></div>
    
     <script>
-        async function initialize() {
+        async function displayTable() {
             let container = document.getElementById("pageTableDiv");
            
             if (SleeperTools != null){
               var data;
 
-              container.innerHTML += "<h3>Label</h3>";
-              data = await SleeperTools.getUsers(SleeperTools.A_LEAGUE_SLEEPER_ID);
-            
+              container.innerHTML += "<h3>Players</h3>";
+              data = await SleeperTools.getAllUsers();
               SleeperTools.generateTable(container, data);
+
             } else {
               console.log("No sleeper tools.");
             }
 
         }
 
-        initialize();
+        displayTable();
     </script>
 </body>
 

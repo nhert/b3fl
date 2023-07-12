@@ -1,0 +1,203 @@
+<html>
+
+<head>
+    <style>
+    .loader {
+      border: 16px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 16px solid #3498db;
+      width: 120px;
+      height: 120px;
+      -webkit-animation: spin 2s linear infinite; /* Safari */
+      animation: spin 2s linear infinite;
+    }
+    
+    /* Safari */
+    @-webkit-keyframes spin {
+      0% { -webkit-transform: rotate(0deg); }
+      100% { -webkit-transform: rotate(360deg); }
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    </style>
+</head>
+
+<body>
+    <h4>View your historical matchups against other managers</h4>
+    <div style="margin:0 auto;">
+        <select id="timespan">
+            <option value="all">All Time</option>
+            <option value="sleeperOnly">Sleeper Era</option>
+            <option value="legacyOnly">NFL.com Era</option>
+        </select>
+        <label for="timespan">Timespan</label>
+    </div>
+    <br>
+    <div style="margin:0 auto;">
+        <select id="ownerLeft"></select>
+        <span><b> Against </b></span>
+        <select id="ownerRight"></select>
+    </div>
+    <br>
+
+    <div class="loader" id="spinner" style="display: none;"></div>
+
+    <div id="pageTableDiv"></div>
+   
+    <script>
+        var allCurOwners = [];
+        var container = document.getElementById("pageTableDiv");
+        var spinner = document.getElementById("spinner");
+        var timespanDropdown = document.getElementById("timespan");
+        var ownerLeftDropdown = document.getElementById("ownerLeft");
+        var ownerRightDropdown = document.getElementById("ownerRight");
+        var currentMatchupData;
+
+        function setSpinnerVisible(flag) {
+            if (flag) {
+                spinner.style.display = "block";
+            } else {
+                spinner.style.display = "none";
+            }
+        }
+
+        function buildAllRecordsIntoCombined(records){
+            var wins = 0, losses = 0, ties = 0;
+
+            var toDisplay;
+            if (timespanDropdown.value == "all"){
+                toDisplay = records;
+            } else {
+                var typeCheck = timespanDropdown.value == "legacyOnly" ? "NFL.com" : "Sleeper";
+                toDisplay = records.filter(obj => {
+                                                    return obj.type === typeCheck
+                                                })
+            }
+
+            toDisplay.forEach(record => {
+                if (record.outcome == "win"){
+                    wins++;
+                } else if (record.outcome == "loss"){
+                    losses++;
+                } else if (record.outcome == "tie"){
+                    ties++;
+                }
+            });
+            return wins + " - " + losses + " - " + ties;
+        }
+
+        function beautifyForTableDisplay(records){
+            tableData = [];
+
+            records.forEach(record => {
+                tableData.push({
+                    "Result": beautifyForOutcomeColumn(record.outcome),
+                    "Pts For": record.owner_score,
+                    "Pts Against": record.opponent_score,
+                    "Year": record.year,
+                    "Week": record.week,
+                    "Type": record.type
+                });
+            });
+
+            return tableData;
+        }
+
+        function beautifyForOutcomeColumn(outcome){
+            if (outcome == "win"){
+                return "<span style=\"color: green;\">WIN</span>";
+            } else if (outcome == "loss"){
+                return "<span style=\"color: red;\">LOSS</span>";
+            } else if (outcome == "tie"){
+                return "<span style=\"color: orange;\">TIE</span>";
+            }
+        }
+
+        function changeTimespan(){
+            container.innerHTML = "";
+            container.innerHTML += "<h1 style=\"margin:0 auto; text-align: center;\"><b>" + buildAllRecordsIntoCombined(currentMatchupData) + "</b></h1><br>";
+
+            if (timespanDropdown.value == "all"){
+                SleeperTools.generateTable(container, beautifyForTableDisplay(currentMatchupData));
+                return;
+            }
+
+            var typeCheck = timespanDropdown.value == "legacyOnly" ? "NFL.com" : "Sleeper";
+            if (currentMatchupData){
+                var toDisplay = currentMatchupData.filter(obj => {
+                                                        return obj.type === typeCheck
+                                                        })
+                SleeperTools.generateTable(container, beautifyForTableDisplay(toDisplay));
+            }
+        }
+
+        async function displayMatchup(){
+            var timespanValue = timespanDropdown.value;
+            var ownerLeftValue = ownerLeftDropdown.value;
+            var ownerRightValue = ownerRightDropdown.value;
+            console.log(timespanValue + " " + ownerLeftValue + " " + ownerRightValue);
+
+            container.innerHTML = "";
+            if (ownerLeftValue == ownerRightValue){
+                container.innerHTML = "<span style=\"color: red;\"><b>Please choose two different managers to view Matchup History.</b></span>";
+            } else {
+                setSpinnerVisible(true);
+                currentMatchupData = await SleeperTools.getMatchupData(ownerLeftValue, ownerRightValue);
+                setSpinnerVisible(false);
+                changeTimespan();
+            }
+        }
+
+        async function initialize() {
+            if (SleeperTools != null){
+                var data;
+                data = await SleeperTools.getAllUsersForMatchup();
+
+                data.forEach(user => {
+                    allCurOwners.push(user);
+
+                    var opt = document.createElement('option');
+                    opt.value = user.SleeperUserId;
+                    opt.innerHTML = user.Manager;
+                    
+                    var opt2 = document.createElement('option');
+                    opt2.value = user.SleeperUserId;
+                    opt2.innerHTML = user.Manager;
+                   
+                    ownerLeftDropdown.appendChild(opt);
+                    ownerRightDropdown.appendChild(opt2);
+                });
+
+                timespanDropdown.addEventListener(
+                    'change',
+                    function() {  changeTimespan(this.value); },
+                    false
+                );
+                ownerLeftDropdown.addEventListener(
+                    'change',
+                    function() {  displayMatchup(); },
+                    false
+                );
+                ownerRightDropdown.addEventListener(
+                    'change',
+                    function() {  displayMatchup(); },
+                    false
+                );
+
+                displayMatchup();
+            
+                //SleeperTools.generateTable(container, data);
+            } else {
+              console.log("No sleeper tools.");
+            }
+
+        }
+
+        initialize();
+    </script>
+</body>
+
+</html>
