@@ -35,99 +35,123 @@ SleeperTools = (function () {
 	var userReals = {
 		"471702444481441792": {
 			name: "Jer",
-			legacyId: "userId-90093"
+			legacyId: "userId-90093",
+			currentLeague: "Championship League"
 		},
 		"867462835893080064": {
 			name: "Nate",
-			legacyId: "userId-27062481"
+			legacyId: "userId-27062481",
+			currentLeague: "Championship League"
 		},
 		"867562511770255360": {
 			name: "Caolan",
-			legacyId: "userId-95527"
+			legacyId: "userId-95527",
+			currentLeague: "Championship League"
 		},
 		"867601213447897088": {
 			name: "Dalley",
-			legacyId: "userId-91161"
+			legacyId: "userId-91161",
+			currentLeague: "Championship League"
 		},
 		"869618771407556608": {
 			name: "Rimon",
-			legacyId: "userId-91908"
+			legacyId: "userId-91908",
+			currentLeague: "Championship League"
 		},
 		"441653692567908352": {
 			name: "Omar",
-			legacyId: "userId-5318397"
+			legacyId: "userId-5318397",
+			currentLeague: "B League"
 		},
 		"471826036959473664": {
 			name: "Ricky",
-			legacyId: "userId-27845667"
+			legacyId: "userId-27845667",
+			currentLeague: "Championship League"
 		},
 		"731243643578490880": {
 			name: "Alex",
-			legacyId: "userId-19416897"
+			legacyId: "userId-19416897",
+			currentLeague: "B League"
 		},
 		"865480383385448448": {
 			name: "Picco",
-			legacyId: "userId-28536059"
+			legacyId: "userId-28536059",
+			currentLeague: "B League"
 		},
 		"865596427626201088": {
 			name: "Jordan S.",
-			legacyId: "userId-130280"
+			legacyId: "userId-130280",
+			currentLeague: "B League"
 		},
 		"866400340310917120": {
 			name: "Eric",
-			legacyId: "userId-144377"
+			legacyId: "userId-144377",
+			currentLeague: "Championship League"
 		},
 		"867272838229454848": {
 			name: "Tom",
-			legacyId: "userId-14712314"
+			legacyId: "userId-14712314",
+			currentLeague: "B League"
 		},
 		"867294931482505216": {
 			name: "Ryan",
-			legacyId: "userId-25196559"
+			legacyId: "userId-25196559",
+			currentLeague: "B League"
 		},
 		"867433255367008256": {
 			name: "Jordan I.",
-			legacyId: "userId-13060178"
+			legacyId: "userId-13060178",
+			currentLeague: "B League"
 		},
 		"867479730138583040": {
 			name: "Liam",
-			legacyId: "userId-25169661"
+			legacyId: "userId-25169661",
+			currentLeague: "B League"
 		},
 		"867489506998267904": {
 			name: "Mike",
-			legacyId: "userId-7530198"
+			legacyId: "userId-7530198",
+			currentLeague: "Championship League"
 		},
 		"867531909708840960": {
 			name: "Zack",
-			legacyId: "userId-5280198"
+			legacyId: "userId-5280198",
+			currentLeague: "Championship League"
 		},
 		"867587986001403904": {
 			name: "Scott",
-			legacyId: "userId-5339416"
+			legacyId: "userId-5339416",
+			currentLeague: "Championship League"
 		},
 		"867593986880229376": {
 			name: "Jake",
-			legacyId: "userId-90171"
+			legacyId: "userId-90171",
+			currentLeague: "Championship League"
 		},
 		"867598805816795136": {
 			name: "Tikl",
-			legacyId: "userId-7830798"
+			legacyId: "userId-7830798",
+			currentLeague: "Championship League"
 		},
 		"867970353417363456": {
 			name: "Marty",
-			legacyId: "userId-962198"
+			legacyId: "userId-962198",
+			currentLeague: "Championship League"
 		},
 		"867598396356259840": {
 			name: "Ty",
-			legacyId: "userId-14721116"
+			legacyId: "userId-14721116",
+			currentLeague: "B League"
 		},
 		"868693802389540864": {
 			name: "Papa T",
-			legacyId: "userId-90093"
+			legacyId: "userId-90093",
+			currentLeague: "Championship League"
 		},
 		"868705613276925952": {
 			name: "Dan",
-			legacyId: "userId-7401235"
+			legacyId: "userId-7401235",
+			currentLeague: "B League"
 		}
 	}
 
@@ -264,7 +288,8 @@ SleeperTools = (function () {
 			jsonData.push({
 				"": "<figure class=\"wp-block-image size-large\"><img src=\"https://sleepercdn.com/avatars/thumbs/" + item.avatar + "\"></img></figure>",
 				"Sleeper Name": item.display_name,
-				"Manager": userReals[item.user_id].name
+				"Manager": userReals[item.user_id].name,
+				"League": userReals[item.user_id].currentLeague
 			});
          });
 
@@ -464,13 +489,13 @@ SleeperTools = (function () {
 
 					var user1score = -1, user2score = -1, outcome = "", year = "", matchupId1 = -1
 					matchups.forEach(matchup => {
-						if (matchup.roster_id == roster1Id){
+						if (matchup.roster_id == rosterId){
 							user1score = parseFloat(matchup.points);
 							matchupId1 = matchup.matchup_id;
 						} 
 					});
 					matchups.forEach(matchup => {
-						if (matchup.matchup_id == matchupId1 && matchup.roster_id != roster1Id){
+						if (matchup.matchup_id == matchupId1 && matchup.roster_id != rosterId){
 							user2score = parseFloat(matchup.points);
 						} 
 					});
@@ -722,7 +747,7 @@ SleeperTools = (function () {
 	
 	// Loads legacy NFL.com json data for the A League from the bluehost server
 	tools.getLegacyChampLeagueData = async function () {
-		return await fetch("https://b3fl.com/A_League_History.json", {
+		return await fetch("https://b3fl.com/wp-content/uploads/A_League_History.json", {
 			method: 'GET',
 			mode: 'no-cors',
 			headers: {
@@ -733,7 +758,7 @@ SleeperTools = (function () {
 
 	// Loads legacy NFL.com json data for the B League from the bluehost server
 	tools.getLegacyOtherLeagueData = async function () {
-		return await fetch("https://b3fl.com/B_League_History.json", {
+		return await fetch("https://b3fl.com/wp-content/uploads/B_League_History.json", {
 			method: 'GET',
 			mode: 'no-cors',
 			headers: {

@@ -1,40 +1,22 @@
 <html>
 
-<head>
-    <style>
-    .loader {
-      border: 16px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 16px solid #3498db;
-      width: 120px;
-      height: 120px;
-      -webkit-animation: spin 2s linear infinite; /* Safari */
-      animation: spin 2s linear infinite;
-    }
-    
-    /* Safari */
-    @-webkit-keyframes spin {
-      0% { -webkit-transform: rotate(0deg); }
-      100% { -webkit-transform: rotate(360deg); }
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    </style>
-</head>
-
 <body>
     <h4>View your all time record in the B3FL</h4>
-    <div style="margin:0 auto;">
+    <div style="margin:20px auto; display: block;">
+        <label for="timespan">Timespan</label>
         <select id="timespan">
             <option value="all">All Time</option>
             <option value="sleeperOnly">Sleeper Era</option>
             <option value="legacyOnly">NFL.com Era</option>
         </select>
-        <label for="timespan">Timespan</label>
+    </div>
+    <div style="margin:20px auto; display: block;">
+        <label for="owner">Manager</label>
         <select id="owner"></select>
+    </div>
+    <div style="margin:20px auto; display: block;">
+        <label for="showPostElimPlayoffGames">Show Post-Elimination Playoff Games</label>
+        <input type="checkbox" id="showPostElimPlayoffGames" name="showPostElimPlayoffGames" checked>
     </div>
     <br>
 
@@ -48,30 +30,20 @@
         var spinner = document.getElementById("spinner");
         var timespanDropdown = document.getElementById("timespan");
         var ownerDropdown = document.getElementById("owner");
+        var postElimPlayoffsCheckbox = document.getElementById("showPostElimPlayoffGames");
         var currentAllTimeData;
 
-        function setSpinnerVisible(flag) {
-            if (flag) {
-                spinner.style.display = "block";
-            } else {
-                spinner.style.display = "none";
-            }
+        function setLoading(isLoading) {
+            spinner.style.display = isLoading ? "block" : "none";
+            timespanDropdown.disabled = isLoading;
+            ownerDropdown.disabled = isLoading;
+            postElimPlayoffsCheckbox.disabled = isLoading;
         }
 
         function buildAllRecordsIntoCombined(records){
             var wins = 0, losses = 0, ties = 0;
 
-            var toDisplay;
-            if (timespanDropdown.value == "all"){
-                toDisplay = records;
-            } else {
-                var typeCheck = timespanDropdown.value == "legacyOnly" ? "NFL.com" : "Sleeper";
-                toDisplay = records.filter(obj => {
-                                                    return obj.type === typeCheck
-                                                })
-            }
-
-            toDisplay.forEach(record => {
+            records.forEach(record => {
                 if (record.outcome == "win"){
                     wins++;
                 } else if (record.outcome == "loss"){
@@ -110,35 +82,45 @@
             }
         }
 
-        function changeTimespan(){
-            container.innerHTML = "";
-            container.innerHTML += "<h1 style=\"margin:0 auto; text-align: center;\"><b>" + buildAllRecordsIntoCombined(currentAllTimeData) + "</b></h1><br>";
-
-            if (timespanDropdown.value == "all"){
-                SleeperTools.generateTable(container, beautifyForTableDisplay(currentAllTimeData));
-                return;
-            }
-
-            var typeCheck = timespanDropdown.value == "legacyOnly" ? "NFL.com" : "Sleeper";
-            if (currentAllTimeData){
-                var toDisplay = currentAllTimeData.filter(obj => {
-                                                        return obj.type === typeCheck
-                                                        })
-                SleeperTools.generateTable(container, beautifyForTableDisplay(toDisplay));
-            }
-        }
-
         async function displayAllTimeRecords(){
             var timespanValue = timespanDropdown.value;
             var ownerValue = ownerDropdown.value;
             
             container.innerHTML = "";
             
-            setSpinnerVisible(true);
+            setLoading(true);
             currentAllTimeData = await SleeperTools.getAllTimeRecordData(ownerValue);
-            setSpinnerVisible(false);
-            changeTimespan();
+            setLoading(false);
+            refreshTable();
+        }
+
+        function refreshTable(){
+            if (!currentAllTimeData){
+                console.warn("Tried to refresh table with null currentAllTimeData");
+                return;
+            } 
+            // currentAllTimeData == all data loaded for player. Perform filters on front-end.
+
+            var dataToDisplay = currentAllTimeData;
+
+            // If timespan dropdown is anything other than all, filter.
+            if (timespanDropdown.value != "all"){
+                var typeCheck = timespanDropdown.value == "legacyOnly" ? "NFL.com" : "Sleeper";
+                dataToDisplay = dataToDisplay.filter(obj => {
+                                                        return obj.type === typeCheck
+                                                        })
+            }
+
+            if (!postElimPlayoffsCheckbox.checked){
+                console.log("!postElimPlayoffsCheckbox.checked");
+            }
+
+            // Refresh displayed stat totals
+            container.innerHTML = "";
+            container.innerHTML += "<h1 style=\"margin:0 auto; text-align: center;\"><b>" + buildAllRecordsIntoCombined(dataToDisplay) + "</b></h1><br>";
             
+            // Refresh displayed table.
+            SleeperTools.generateTable(container, beautifyForTableDisplay(dataToDisplay));
         }
 
         async function initialize() {
@@ -156,14 +138,22 @@
                     ownerDropdown.appendChild(opt);
                 });
 
-                timespanDropdown.addEventListener(
-                    'change',
-                    function() {  changeTimespan(this.value); },
-                    false
-                );
+                // This will load data
                 ownerDropdown.addEventListener(
                     'change',
                     function() {  displayAllTimeRecords(); },
+                    false
+                );
+
+                // This will filter loaded data
+                timespanDropdown.addEventListener(
+                    'change',
+                    function() {  refreshTable(); },
+                    false
+                );
+                postElimPlayoffsCheckbox.addEventListener(
+                    'change',
+                    function() {  refreshTable(); },
                     false
                 );
             
