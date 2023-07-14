@@ -65,7 +65,8 @@
                     "Pts Against": record.opponent_score,
                     "Year": record.year,
                     "Week": record.week,
-                    "Type": record.type
+                    "Type": record.type,
+                    "Test": record.game_type
                 });
             });
 
@@ -112,7 +113,9 @@
             }
 
             if (!postElimPlayoffsCheckbox.checked){
-                console.log("!postElimPlayoffsCheckbox.checked");
+                dataToDisplay = dataToDisplay.filter(obj => {
+                                                        return obj.game_type != "PlayoffPostElimination"
+                                                        })
             }
 
             // Refresh displayed stat totals
