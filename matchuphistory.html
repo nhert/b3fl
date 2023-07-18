@@ -2,16 +2,15 @@
 
 <body>
     <h4>View your historical matchups against other managers</h4>
-    <div style="margin:0 auto;">
+    <div style="margin:20px auto; display: block;">
+        <label for="timespan">Timespan</label>
         <select id="timespan">
             <option value="all">All Time</option>
             <option value="sleeperOnly">Sleeper Era</option>
             <option value="legacyOnly">NFL.com Era</option>
         </select>
-        <label for="timespan">Timespan</label>
     </div>
-    <br>
-    <div style="margin:0 auto;">
+    <div style="margin:20px auto; display: block;">
         <select id="ownerLeft"></select>
         <span><b> Against </b></span>
         <select id="ownerRight"></select>
@@ -31,12 +30,11 @@
         var ownerRightDropdown = document.getElementById("ownerRight");
         var currentMatchupData;
 
-        function setSpinnerVisible(flag) {
-            if (flag) {
-                spinner.style.display = "block";
-            } else {
-                spinner.style.display = "none";
-            }
+        function setLoading(isLoading) {
+            spinner.style.display = isLoading ? "block" : "none";
+            timespanDropdown.disabled = isLoading;
+            ownerLeftDropdown.disabled = isLoading;
+            ownerRightDropdown.disabled = isLoading;
         }
 
         function buildAllRecordsIntoCombined(records){
@@ -74,8 +72,7 @@
                     "Pts Against": record.opponent_score,
                     "Year": record.year,
                     "Week": record.week,
-                    "Type": record.type,
-                    "Test": record.game_type
+                    "Platform": record.type
                 });
             });
 
@@ -92,39 +89,47 @@
             }
         }
 
-        function changeTimespan(){
-            container.innerHTML = "";
-            container.innerHTML += "<h1 style=\"margin:0 auto; text-align: center;\"><b>" + buildAllRecordsIntoCombined(currentMatchupData) + "</b></h1><br>";
-
-            if (timespanDropdown.value == "all"){
-                SleeperTools.generateTable(container, beautifyForTableDisplay(currentMatchupData));
-                return;
-            }
-
-            var typeCheck = timespanDropdown.value == "legacyOnly" ? "NFL.com" : "Sleeper";
-            if (currentMatchupData){
-                var toDisplay = currentMatchupData.filter(obj => {
-                                                        return obj.type === typeCheck
-                                                        })
-                SleeperTools.generateTable(container, beautifyForTableDisplay(toDisplay));
-            }
-        }
-
         async function displayMatchup(){
             var timespanValue = timespanDropdown.value;
             var ownerLeftValue = ownerLeftDropdown.value;
             var ownerRightValue = ownerRightDropdown.value;
-            console.log(timespanValue + " " + ownerLeftValue + " " + ownerRightValue);
+            //console.log(timespanValue + " " + ownerLeftValue + " " + ownerRightValue);
 
             container.innerHTML = "";
             if (ownerLeftValue == ownerRightValue){
                 container.innerHTML = "<span style=\"color: red;\"><b>Please choose two different managers to view Matchup History.</b></span>";
+                currentMatchupData = null;
             } else {
-                setSpinnerVisible(true);
+                setLoading(true);
                 currentMatchupData = await SleeperTools.getMatchupData(ownerLeftValue, ownerRightValue);
-                setSpinnerVisible(false);
-                changeTimespan();
+                setLoading(false);
+                refreshTable();
             }
+        }
+
+        function refreshTable(){
+            if (!currentMatchupData){
+                console.warn("Tried to refresh table with null currentMatchupData");
+                return;
+            } 
+            // currentMatchupData == all data loaded for players. Perform filters on front-end.
+
+            var dataToDisplay = currentMatchupData;
+
+            // If timespan dropdown is anything other than all, filter.
+            if (timespanDropdown.value != "all"){
+                var typeCheck = timespanDropdown.value == "legacyOnly" ? "NFL.com" : "Sleeper";
+                dataToDisplay = dataToDisplay.filter(obj => {
+                                                        return obj.type === typeCheck
+                                                        })
+            }
+
+            // Refresh displayed stat totals
+            container.innerHTML = "";
+            container.innerHTML += "<h1 style=\"margin:0 auto; text-align: center;\"><b>" + buildAllRecordsIntoCombined(dataToDisplay) + "</b></h1><br>";
+            
+            // Refresh displayed table.
+            SleeperTools.generateTable(container, beautifyForTableDisplay(dataToDisplay));
         }
 
         async function initialize() {
@@ -149,7 +154,7 @@
 
                 timespanDropdown.addEventListener(
                     'change',
-                    function() {  changeTimespan(this.value); },
+                    function() {  refreshTable(); },
                     false
                 );
                 ownerLeftDropdown.addEventListener(

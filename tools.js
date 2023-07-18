@@ -13,154 +13,155 @@ SleeperTools = (function () {
 	tools.A_LEAGUE_SLEEPER_ID_2022_SEASON = "865477710976286720"; // using for user generation atm
 	tools.B_LEAGUE_SLEEPER_ID_2022_SEASON = "866171664994541568"; // record correction for PaPa T in 2022
 
-	/*
-	Example objects that are created for matchup history.
+	tools.constants = {
+		// Display name for leagues
+		A_LEAGUE_NAME: "A League",
+		B_LEAGUE_NAME: "B League",
 
-	var userRecord = {
-		legacyUserId: "",
-		sleeperUserId: "",
-		records: [], // Array of fantasyRecord objects
-	}
+		// Record correction constants
+		PAPA_T_SLEEPER_ID_RECORD_CORRECTION: "868693802389540864",
+		JER_SLEEPER_ID_RECORD_CORRECTION: "471702444481441792",
+		
+		// Game type
+		GAME_TYPE_REGULAR: "Regular",
+		GAME_TYPE_PLAYOFF: "Playoff",
+		GAME_TYPE_ELIMINATED: "PlayoffPostElimination",
 
-	var fantasyRecord = {
-		year: "2012",
-		wins: "10",
-		losses: "4",
-		ties: "0",
-		isLegacy: "true"
+		// Outcomes
+		OUTCOME_TYPE_WIN: "win",
+		OUTCOME_TYPE_LOSS: "loss",
+		OUTCOME_TYPE_TIE: "tie",
 	}
-	*/
 
 	// Sleeper ID -> Object
+	// For use internally on tools.js
 	var userReals = {
 		"471702444481441792": {
 			name: "Jer",
 			legacyId: "userId-90093",
-			currentLeague: "Championship League"
+			currentLeague: tools.constants.A_LEAGUE_NAME
 		},
 		"867462835893080064": {
 			name: "Nate",
 			legacyId: "userId-27062481",
-			currentLeague: "Championship League"
+			currentLeague: tools.constants.A_LEAGUE_NAME
 		},
 		"867562511770255360": {
 			name: "Caolan",
 			legacyId: "userId-95527",
-			currentLeague: "Championship League"
+			currentLeague: tools.constants.A_LEAGUE_NAME
 		},
 		"867601213447897088": {
 			name: "Dalley",
 			legacyId: "userId-91161",
-			currentLeague: "Championship League"
+			currentLeague: tools.constants.A_LEAGUE_NAME
 		},
 		"869618771407556608": {
 			name: "Rimon",
 			legacyId: "userId-91908",
-			currentLeague: "Championship League"
+			currentLeague: tools.constants.A_LEAGUE_NAME
 		},
 		"441653692567908352": {
 			name: "Omar",
 			legacyId: "userId-5318397",
-			currentLeague: "B League"
+			currentLeague: tools.constants.B_LEAGUE_NAME
 		},
 		"471826036959473664": {
 			name: "Ricky",
 			legacyId: "userId-27845667",
-			currentLeague: "Championship League"
+			currentLeague: tools.constants.A_LEAGUE_NAME
 		},
 		"731243643578490880": {
 			name: "Alex",
 			legacyId: "userId-19416897",
-			currentLeague: "B League"
+			currentLeague: tools.constants.B_LEAGUE_NAME
 		},
 		"865480383385448448": {
 			name: "Picco",
 			legacyId: "userId-28536059",
-			currentLeague: "B League"
+			currentLeague: tools.constants.B_LEAGUE_NAME
 		},
 		"865596427626201088": {
 			name: "Jordan S.",
 			legacyId: "userId-130280",
-			currentLeague: "B League"
+			currentLeague: tools.constants.B_LEAGUE_NAME
 		},
 		"866400340310917120": {
 			name: "Eric",
 			legacyId: "userId-144377",
-			currentLeague: "Championship League"
+			currentLeague: tools.constants.A_LEAGUE_NAME
 		},
 		"867272838229454848": {
 			name: "Tom",
 			legacyId: "userId-14712314",
-			currentLeague: "B League"
+			currentLeague: tools.constants.B_LEAGUE_NAME
 		},
 		"867294931482505216": {
 			name: "Ryan",
 			legacyId: "userId-25196559",
-			currentLeague: "B League"
+			currentLeague: tools.constants.B_LEAGUE_NAME
 		},
 		"867433255367008256": {
 			name: "Jordan I.",
 			legacyId: "userId-13060178",
-			currentLeague: "B League"
+			currentLeague: tools.constants.B_LEAGUE_NAME
 		},
 		"867479730138583040": {
 			name: "Liam",
 			legacyId: "userId-25169661",
-			currentLeague: "B League"
+			currentLeague: tools.constants.B_LEAGUE_NAME
 		},
 		"867489506998267904": {
 			name: "Mike",
 			legacyId: "userId-7530198",
-			currentLeague: "Championship League"
+			currentLeague: tools.constants.A_LEAGUE_NAME
 		},
 		"867531909708840960": {
 			name: "Zack",
 			legacyId: "userId-5280198",
-			currentLeague: "Championship League"
+			currentLeague: tools.constants.A_LEAGUE_NAME
 		},
 		"867587986001403904": {
 			name: "Scott",
 			legacyId: "userId-5339416",
-			currentLeague: "Championship League"
+			currentLeague: tools.constants.A_LEAGUE_NAME
 		},
 		"867593986880229376": {
 			name: "Jake",
 			legacyId: "userId-90171",
-			currentLeague: "Championship League"
+			currentLeague: tools.constants.A_LEAGUE_NAME
 		},
 		"867598805816795136": {
 			name: "Tikl",
 			legacyId: "userId-7830798",
-			currentLeague: "Championship League"
+			currentLeague: tools.constants.A_LEAGUE_NAME
 		},
 		"867970353417363456": {
 			name: "Marty",
 			legacyId: "userId-962198",
-			currentLeague: "Championship League"
+			currentLeague: tools.constants.A_LEAGUE_NAME
 		},
 		"867598396356259840": {
 			name: "Ty",
 			legacyId: "userId-14721116",
-			currentLeague: "B League"
+			currentLeague: tools.constants.B_LEAGUE_NAME
 		},
 		"868693802389540864": {
 			name: "Papa T",
 			legacyId: "userId-90093",
-			currentLeague: "Championship League"
+			currentLeague: tools.constants.A_LEAGUE_NAME
 		},
 		"868705613276925952": {
 			name: "Dan",
 			legacyId: "userId-7401235",
-			currentLeague: "B League"
+			currentLeague: tools.constants.B_LEAGUE_NAME
 		}
 	}
 
-	var papaT_SleeperID = "868693802389540864";
-	var jer_NflID = "userId-90093";
-	var jer_SleeperID = "471702444481441792";
-
 	// Generate a basic html table from provided jsonData. Parent will be set to "container"
 	tools.generateTable = function (container, jsonData) {
+		if (!jsonData[0]) return;
+
 		// Create the table element
 		let table = document.createElement("table");
          
@@ -289,7 +290,7 @@ SleeperTools = (function () {
 				"": "<figure class=\"wp-block-image size-large\"><img src=\"https://sleepercdn.com/avatars/thumbs/" + item.avatar + "\"></img></figure>",
 				"Sleeper Name": item.display_name,
 				"Manager": userReals[item.user_id].name,
-				"League": userReals[item.user_id].currentLeague
+				"League": beautifyLeagueField(userReals[item.user_id].currentLeague)
 			});
          });
 
@@ -297,6 +298,12 @@ SleeperTools = (function () {
 
 		return jsonData;
 	};
+
+	function beautifyLeagueField(league){
+		return league == tools.constants.A_LEAGUE_NAME ? 
+							"<span style=\"color: #ccac02;\"><b>" + league + "</b></span>" : 
+							"<span style=\"color: #969696;\"><b>" + league + "</b></span>";
+	}
 
 	// Get unique list of all users in both sleeper leagues.
 	tools.getAllUsersForMatchup = async function () {
@@ -349,7 +356,7 @@ SleeperTools = (function () {
 		var y = parseInt(year);
 		var w = parseInt(week);
 
-		if (isPostElim) return "PlayoffPostElimination";
+		if (isPostElim) return tools.constants.GAME_TYPE_ELIMINATED;
 
 		//console.log(year + " " + week + " " + lastWeeksOutcome + " " + isPostElim);
 
@@ -357,21 +364,21 @@ SleeperTools = (function () {
 		if (y >= 2021) { // Playoffs are weeks 15-17
 			if (w >= 15){ // is playoffs
 				if (w >= 16 && lastWeeksOutcome == "loss"){
-					return "PlayoffPostElimination";
+					return tools.constants.GAME_TYPE_ELIMINATED;
 				} 
-				return "Playoff"
+				return tools.constants.GAME_TYPE_PLAYOFF
 			}
 		} else { // Playoffs are weeks 14-16
 			if (w >= 14){ // is playoffs
 				if (w >= 15 && lastWeeksOutcome == "loss"){
-					return "PlayoffPostElimination";
+					return tools.constants.GAME_TYPE_ELIMINATED;
 				} 
-				return "Playoff"
+				return tools.constants.GAME_TYPE_PLAYOFF
 			}
 		}
 
 		// If not playoffs, regular.
-		return "Regular";
+		return tools.constants.GAME_TYPE_REGULAR;
 	}
 
 	// SLEEPER Records.
@@ -382,8 +389,8 @@ SleeperTools = (function () {
 
 		var records = [];
 
-		var isPaPaT_Rule = sleeperId1 == papaT_SleeperID || sleeperId2 == papaT_SleeperID; // If you played him in legacy, pull using jers NFL ID
-		var isJer_Rule = sleeperId1 == jer_SleeperID || sleeperId2 == jer_SleeperID;
+		var isPaPaT_Rule = sleeperId1 == tools.constants.PAPA_T_SLEEPER_ID_RECORD_CORRECTION || sleeperId2 == tools.constants.PAPA_T_SLEEPER_ID_RECORD_CORRECTION; // If you played him in legacy, pull using jers NFL ID
+		var isJer_Rule = sleeperId1 == tools.constants.JER_SLEEPER_ID_RECORD_CORRECTION || sleeperId2 == tools.constants.JER_SLEEPER_ID_RECORD_CORRECTION;
 		if (isPaPaT_Rule && isJer_Rule) return records;
 
 		// If you played Jers ID in sleeper in B League 2022 - you actually played Papa T. If in , search using jers sleeperId since his account controlled the team
@@ -401,18 +408,18 @@ SleeperTools = (function () {
 			if (leagueId == tools.B_LEAGUE_SLEEPER_ID_2022_SEASON) { 
 				
 				//use jers sleeperid for records.
-				if (sleeperId1 == papaT_SleeperID){
-					temporarySleeperID1 = jer_SleeperID;
+				if (sleeperId1 == tools.constants.PAPA_T_SLEEPER_ID_RECORD_CORRECTION){
+					temporarySleeperID1 = tools.constants.JER_SLEEPER_ID_RECORD_CORRECTION;
 					
-				} else if (sleeperId2 == papaT_SleeperID){
-					temporarySleeperID2 = jer_SleeperID;
+				} else if (sleeperId2 == tools.constants.PAPA_T_SLEEPER_ID_RECORD_CORRECTION){
+					temporarySleeperID2 = tools.constants.JER_SLEEPER_ID_RECORD_CORRECTION;
 					
 				}
 
-				if (sleeperId1 == jer_SleeperID){
+				if (sleeperId1 == tools.constants.JER_SLEEPER_ID_RECORD_CORRECTION){
 					temporarySleeperID1 = "";
 				
-				} else if (sleeperId2 == jer_SleeperID){
+				} else if (sleeperId2 == tools.constants.JER_SLEEPER_ID_RECORD_CORRECTION){
 					temporarySleeperID2 = "";
 					
 				}
@@ -478,8 +485,8 @@ SleeperTools = (function () {
 
 		var records = [];
 
-		var isPaPaT_Rule = sleeperId == papaT_SleeperID; // If you played him in legacy, pull using jers NFL ID
-		var isJer_Rule = sleeperId == jer_SleeperID;
+		var isPaPaT_Rule = sleeperId == tools.constants.PAPA_T_SLEEPER_ID_RECORD_CORRECTION; // If you played him in legacy, pull using jers NFL ID
+		var isJer_Rule = sleeperId == tools.constants.JER_SLEEPER_ID_RECORD_CORRECTION;
 
 		// If you played Jers ID in sleeper in B League 2022 - you actually played Papa T. If in , search using jers sleeperId since his account controlled the team
 
@@ -495,7 +502,7 @@ SleeperTools = (function () {
 			if (leagueId == tools.B_LEAGUE_SLEEPER_ID_2022_SEASON) { 
 				//use jers sleeperid for records.
 				if (isPaPaT_Rule){
-					temporarySleeperID = jer_SleeperID;
+					temporarySleeperID = tools.constants.JER_SLEEPER_ID_RECORD_CORRECTION;
 				}
 				if (isJer_Rule){
 					temporarySleeperID = "";
@@ -539,7 +546,7 @@ SleeperTools = (function () {
 						year = leagueData.season;
 
 						var gametype = getGameType(year, week, lastPlayoffResult, isPlayoffsPostElim);
-						if (gametype == "PlayoffPostElimination") isPlayoffsPostElim = true;
+						if (gametype == tools.constants.GAME_TYPE_ELIMINATED) isPlayoffsPostElim = true;
 						lastPlayoffResult = outcome;
 
 						records.push({
@@ -579,8 +586,8 @@ SleeperTools = (function () {
 
 		var records = [];
 
-		var isPaPaT_Rule = sleeperId1 == papaT_SleeperID || sleeperId2 == papaT_SleeperID; // only existed in B league
-		var isJer_Rule = sleeperId1 == jer_SleeperID || sleeperId2 == jer_SleeperID; // Only existed in A league
+		var isPaPaT_Rule = sleeperId1 == tools.constants.PAPA_T_SLEEPER_ID_RECORD_CORRECTION || sleeperId2 == tools.constants.PAPA_T_SLEEPER_ID_RECORD_CORRECTION; // only existed in B league
+		var isJer_Rule = sleeperId1 == tools.constants.JER_SLEEPER_ID_RECORD_CORRECTION || sleeperId2 == tools.constants.JER_SLEEPER_ID_RECORD_CORRECTION; // Only existed in A league
 		if (isPaPaT_Rule && isJer_Rule) return records;
 
 		for (var year in seasonsA) {
@@ -685,8 +692,8 @@ SleeperTools = (function () {
 
 		var records = [];
 
-		var isPaPaT_Rule = sleeperId == papaT_SleeperID; // only existed in B league
-		var isJer_Rule = sleeperId == jer_SleeperID; // Only existed in A league
+		var isPaPaT_Rule = sleeperId == tools.constants.PAPA_T_SLEEPER_ID_RECORD_CORRECTION; // only existed in B league
+		var isJer_Rule = sleeperId == tools.constants.JER_SLEEPER_ID_RECORD_CORRECTION; // Only existed in A league
 
 		for (var year in seasonsA) {
 			var season = seasonsA[year];
@@ -713,7 +720,7 @@ SleeperTools = (function () {
 						var outcome = outcomeLabelFromScore(score, opScore);
 
 						var gametype = getGameType(year, user1games[gameId].week, lastPlayoffResult, isPlayoffsPostElim);
-						if (gametype == "PlayoffPostElimination") isPlayoffsPostElim = true;
+						if (gametype == tools.constants.GAME_TYPE_ELIMINATED) isPlayoffsPostElim = true;
 						lastPlayoffResult = outcome;
 
 						if (!isPaPaT_Rule && !(score <= 0 && opScore <= 0)){
@@ -759,7 +766,7 @@ SleeperTools = (function () {
 						var outcome = outcomeLabelFromScore(score, opScore);
 
 						var gametype = getGameType("2021", user1games[gameId].week, lastPlayoffResult, isPlayoffsPostElim);
-						if (gametype == "PlayoffPostElimination") isPlayoffsPostElim = true;
+						if (gametype == tools.constants.GAME_TYPE_ELIMINATED) isPlayoffsPostElim = true;
 						lastPlayoffResult = outcome;
 
 						if (!isJer_Rule && !(score <= 0 && opScore <= 0)){
@@ -784,9 +791,9 @@ SleeperTools = (function () {
 
 	function outcomeLabelFromScore(score, opponentScore){
 		if (score == opponentScore){
-			return "tie";
+			return tools.constants.OUTCOME_TYPE_TIE;
 		}
-		return score > opponentScore ? "win" : "loss";
+		return score > opponentScore ? tools.constants.OUTCOME_TYPE_WIN : tools.constants.OUTCOME_TYPE_LOSS;
 	}
 
 	// Get all sleeper league metadata from sleeper league id.

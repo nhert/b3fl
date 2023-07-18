@@ -15,7 +15,7 @@
         <select id="owner"></select>
     </div>
     <div style="margin:20px auto; display: block;">
-        <label for="showPostElimPlayoffGames">Show Post-Elimination Playoff Games</label>
+        <label for="showPostElimPlayoffGames">Include games played after being eliminated from playoffs</label>
         <input type="checkbox" id="showPostElimPlayoffGames" name="showPostElimPlayoffGames" checked>
     </div>
     <br>
@@ -65,12 +65,18 @@
                     "Pts Against": record.opponent_score,
                     "Year": record.year,
                     "Week": record.week,
-                    "Type": record.type,
-                    "Test": record.game_type
+                    "Platform": record.type,
+                    "Game Type": beautifyForGameTypeColumn(record.game_type)
                 });
             });
 
             return tableData;
+        }
+
+        function beautifyForGameTypeColumn(type){
+            if (type == "Regular") return "<span style=\"color: grey;\"><b>Regular Season</b></span>";
+            if (type == "Playoff") return "<span style=\"color: orange;\"><b>Playoff Game</b></span>";
+            if (type == "PlayoffPostElimination") return "<span style=\"color: red;\"><b>After Elimination</b></span>";
         }
 
         function beautifyForOutcomeColumn(outcome){
