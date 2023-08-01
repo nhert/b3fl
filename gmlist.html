@@ -11,8 +11,8 @@
               var data;
 
               container.innerHTML += "<h3>Players</h3>";
-              data = await SleeperTools.getAllUsers();
-              SleeperTools.generateTable(container, data);
+              data = await SleeperTools.getGmList();
+              SleeperTools.generateGmListTable(container, data);
 
             } else {
               console.log("No sleeper tools.");

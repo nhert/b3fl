@@ -2,6 +2,7 @@
 
 <body>
     <h4>View your historical matchups against other managers</h4>
+    <h5><i>This tool includes all historical games against the opponent, even games played after playoff elimination.</i></h5>
     <div style="margin:20px auto; display: block;">
         <label for="timespan">Timespan</label>
         <select id="timespan">
@@ -72,7 +73,8 @@
                     "Pts Against": record.opponent_score,
                     "Year": record.year,
                     "Week": record.week,
-                    "Platform": record.type
+                    "Platform": record.type,
+                    "League": record.league_type
                 });
             });
 
@@ -86,6 +88,8 @@
                 return "<span style=\"color: red;\">LOSS</span>";
             } else if (outcome == "tie"){
                 return "<span style=\"color: orange;\">TIE</span>";
+            } else if (outcome == "noContest"){
+                return "<span style=\"color: black;\">NO CONTEST</span>";
             }
         }
 
@@ -135,7 +139,7 @@
         async function initialize() {
             if (SleeperTools != null){
                 var data;
-                data = await SleeperTools.getAllUsersForMatchup();
+                data = await SleeperTools.getAllUserIds();
 
                 data.forEach(user => {
                     allCurOwners.push(user);

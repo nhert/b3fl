@@ -1,43 +1,28 @@
 <html>
 
 <body>
-    <h4>View your all time record in the B3FL</h4>
-    <div style="margin:20px auto; display: block;">
-        <label for="timespan">Timespan</label>
-        <select id="timespan">
-            <option value="all">All Time</option>
-            <option value="sleeperOnly">Sleeper Era</option>
-            <option value="legacyOnly">NFL.com Era</option>
-        </select>
-    </div>
+    <h3>Select a GM below</h3>
     <div style="margin:20px auto; display: block;">
         <label for="owner">Manager</label>
         <select id="owner"></select>
-    </div>
-    <div style="margin:20px auto; display: block;">
-        <label for="showPostElimPlayoffGames">Include games played after being eliminated from playoffs</label>
-        <input type="checkbox" id="showPostElimPlayoffGames" name="showPostElimPlayoffGames" checked>
     </div>
     <br>
 
     <div class="loader" id="spinner" style="display: none;"></div>
 
-    <div id="pageTableDiv"></div>
+    <div id="pageTableDiv" style="text-align: center; margin:20px auto; display: block;"></div>
    
     <script>
         var allCurOwners = [];
         var container = document.getElementById("pageTableDiv");
         var spinner = document.getElementById("spinner");
-        var timespanDropdown = document.getElementById("timespan");
         var ownerDropdown = document.getElementById("owner");
-        var postElimPlayoffsCheckbox = document.getElementById("showPostElimPlayoffGames");
-        var currentAllTimeData;
+        
+        var currentProfileData;
 
         function setLoading(isLoading) {
             spinner.style.display = isLoading ? "block" : "none";
-            timespanDropdown.disabled = isLoading;
             ownerDropdown.disabled = isLoading;
-            postElimPlayoffsCheckbox.disabled = isLoading;
         }
 
         function buildAllRecordsIntoCombined(records){
@@ -60,24 +45,17 @@
 
             records.forEach(record => {
                 tableData.push({
-                    "Game Type": beautifyForGameTypeColumn(record.game_type),
                     "Result": beautifyForOutcomeColumn(record.outcome),
                     "Pts For": record.owner_score,
                     "Pts Against": record.opponent_score,
                     "Year": record.year,
                     "Week": record.week,
                     "Platform": record.type,
-                    "League": record.league_type
+                    "Game Type": beautifyForGameTypeColumn(record.game_type)
                 });
             });
 
             return tableData;
-        }
-
-        function beautifyForGameTypeColumn(type){
-            if (type == "Regular") return "<span style=\"color: grey;\"><b>Regular Season</b></span>";
-            if (type == "Playoff") return "<span style=\"color: orange;\"><b>Playoff Game</b></span>";
-            if (type == "PlayoffPostElimination") return "<span style=\"color: red;\"><b>After Elimination</b></span>";
         }
 
         function beautifyForOutcomeColumn(outcome){
@@ -92,48 +70,68 @@
             }
         }
 
-        async function displayAllTimeRecords(){
-            var timespanValue = timespanDropdown.value;
+        async function displayData(){
             var ownerValue = ownerDropdown.value;
             
             container.innerHTML = "";
             
             setLoading(true);
-            currentAllTimeData = await SleeperTools.getAllTimeRecordData(ownerValue);
+            currentProfileData = await SleeperTools.getGmProfile(ownerValue);
             setLoading(false);
             refreshTable();
         }
 
         function refreshTable(){
-            if (!currentAllTimeData){
-                console.warn("Tried to refresh table with null currentAllTimeData");
+            if (!currentProfileData){
+                console.warn("Tried to refresh table with null currentProfileData");
                 return;
             } 
-            // currentAllTimeData == all data loaded for player. Perform filters on front-end.
-
-            var dataToDisplay = currentAllTimeData;
-
-            // If timespan dropdown is anything other than all, filter.
-            if (timespanDropdown.value != "all"){
-                var typeCheck = timespanDropdown.value == "legacyOnly" ? "NFL.com" : "Sleeper";
-                dataToDisplay = dataToDisplay.filter(obj => {
-                                                        return obj.type === typeCheck
-                                                        })
-            }
-
-            if (!postElimPlayoffsCheckbox.checked){
-                dataToDisplay = dataToDisplay.filter(obj => {
-                                                        return obj.game_type != "PlayoffPostElimination"
-                                                        })
-            }
-
+    
+            var dataToDisplay = currentProfileData;
+            var profile = dataToDisplay[0];
+           
             // Refresh displayed stat totals
-            container.innerHTML = "";
-            container.innerHTML += "<h1 style=\"margin:0 auto; text-align: center;\"><b>" + buildAllRecordsIntoCombined(dataToDisplay) + "</b></h1><br>";
-            
-            // Refresh displayed table.
-            SleeperTools.generateTable(container, beautifyForTableDisplay(dataToDisplay));
+            container.innerHTML += tagWith("Titles: " + profile.titles, "h2");
+            container.innerHTML += "<br>";
+            container.innerHTML += tagWith("Best Season: " + profile.seasonBest, "h3");
+            container.innerHTML += tagWith("Worst Season: " + profile.seasonWorst, "h3");
+            container.innerHTML += "<br>";
+            container.innerHTML += tagWith("Avg Pts For: " + profile.avgPtsFor, "h5");
+            container.innerHTML += tagWith("Avg Pts Against: " + profile.avgPtsAgainst, "h5");
+            container.innerHTML += tagWith("Career Win %: " + profile.avgWinPercent, "h5");
+            container.innerHTML += "<br>";
+            container.innerHTML += tagWith("Years Played: " + profile.yearsPlayed, "h5");
+            container.innerHTML += tagWith("Games Played: " + profile.gamesPlayed, "h5");
+            container.innerHTML += tagWith("'Nice' Scores: " + profile.niceScores, "h5");
         }
+
+        /*
+        let gmProfile = {
+			titles: "N/A",
+			seasonBest: mostWinsRecord.record_string + " (" + mostWinsRecord.year + ")",
+			seasonWorst: mostLossesRecord.record_string + " (" + mostLossesRecord.year + ")",
+			bio: "N/A",
+			avgPtsFor: avgPtsFor.toFixed(2),
+			avgPtsAgainst: avgPtsAgainst.toFixed(2),
+			avgWinPercent: avgWinPct,
+			niceScores: niceScores,
+			gamesPlayed: recordCount,
+			yearsPlayed: yearsPlayed
+		}
+        */
+
+        function tagWith(sourceString, tag){
+            return "<{0}>{1}</{0}>".format(tag, sourceString);
+        }
+
+        String.prototype.format = function() {
+            let formatted = this;
+            for (let i = 0; i < arguments.length; i++) {
+                let regexp = new RegExp('\\{'+i+'\\}', 'gi');
+                formatted = formatted.replace(regexp, arguments[i]);
+            }
+            return formatted;
+        };
 
         function checkUserParam(){
             var urlParams = new URLSearchParams(window.location.search);
@@ -163,24 +161,12 @@
                 // This will load data
                 ownerDropdown.addEventListener(
                     'change',
-                    function() {  displayAllTimeRecords(); },
+                    function() {  displayData(); },
                     false
                 );
 
-                // This will filter loaded data
-                timespanDropdown.addEventListener(
-                    'change',
-                    function() {  refreshTable(); },
-                    false
-                );
-                postElimPlayoffsCheckbox.addEventListener(
-                    'change',
-                    function() {  refreshTable(); },
-                    false
-                );
-            
                 checkUserParam();
-                displayAllTimeRecords();
+                displayData();
             } else {
               console.log("No sleeper tools.");
             }

@@ -8,7 +8,7 @@ SleeperTools = (function () {
 
 	// ************** MOST CURRENT Sleeper League IDs ***********************
 	tools.A_LEAGUE_SLEEPER_ID = "968583157932937216";
-	tools.B_LEAGUE_SLEEPER_ID = "866171664994541568";
+	tools.B_LEAGUE_SLEEPER_ID = "992194800943939584";
 
 	tools.A_LEAGUE_SLEEPER_ID_2022_SEASON = "865477710976286720"; // using for user generation atm
 	tools.B_LEAGUE_SLEEPER_ID_2022_SEASON = "866171664994541568"; // record correction for PaPa T in 2022
@@ -31,6 +31,7 @@ SleeperTools = (function () {
 		OUTCOME_TYPE_WIN: "win",
 		OUTCOME_TYPE_LOSS: "loss",
 		OUTCOME_TYPE_TIE: "tie",
+		OUTCOME_TYPE_NO_CONTEST: "noContest",
 	}
 
 	// Sleeper ID -> Object
@@ -201,6 +202,54 @@ SleeperTools = (function () {
 		container.appendChild(table) // Append the table to the container element
 	};
 
+	tools.generateGmListTable = function (container, jsonData) {
+		if (!jsonData[0]) return;
+
+		// Create the table element
+		let table = document.createElement("table");
+         
+		// Get the keys (column names) of the first object in the JSON data
+		let cols = Object.keys(jsonData[0]);
+		
+		// Create the header element
+		let thead = document.createElement("thead");
+		let tr = document.createElement("tr");
+		
+		// Loop through the column names and create header cells
+		cols.forEach((item) => {
+		   let th = document.createElement("th");
+		   th.innerText = item; // Set the column name as the text of the header cell
+		   tr.appendChild(th); // Append the header cell to the header row
+		});
+		thead.appendChild(tr); // Append the header row to the header
+		table.append(tr) // Append the header to the table
+		
+		// Loop through the JSON data and create table rows
+		jsonData.forEach((item) => {
+		   let tr = document.createElement("tr");
+		   
+		   // Get the values of the current object in the JSON data
+		   let vals = Object.values(item);
+
+		   let first = true;
+		   
+		   // Loop through the values and create table cells
+		   vals.forEach((elem) => {
+				let td = document.createElement("td");
+				if(first){
+					first = false;
+					td.setAttribute("style", "min-width:80px;");
+				}
+			  td.innerHTML = elem; // Set the value as the text of the table cell
+			  tr.appendChild(td); // Append the table cell to the table row
+		   });
+		   table.appendChild(tr); // Append the table row to the table
+		});
+
+		//container.innerHTML = "";
+		container.appendChild(table) // Append the table to the container element
+	};
+
 	// Get a list of users from sleeper leagueId
 	tools.getUsers = async function (leagueId) {
 		const response = await fetch(getLeagueRestAPI(leagueId) + "/users")
@@ -219,6 +268,10 @@ SleeperTools = (function () {
 		return jsonData;
 	};
 
+	tools.doesUserExist = function (sleeperId) {
+		return userReals[sleeperId] != null;
+	}
+
 	// List of latest sleeper league and all previous sleeper league ids.
 	async function getSleeperLeagueIdsAndAllPreviousLeagueIds(){
 		var allSleeperLeagueIds = [];
@@ -226,7 +279,10 @@ SleeperTools = (function () {
 		prevLeagueId = tools.A_LEAGUE_SLEEPER_ID;
 		var e = 0;
 		while(prevLeagueId != null && e < 50){
-			allSleeperLeagueIds.push(prevLeagueId);
+			allSleeperLeagueIds.push({
+				LeagueId: prevLeagueId,
+				LeagueType: "A League"
+			});
 			const league = await fetch(getLeagueRestAPI(prevLeagueId)).then((res) => res.json());
 			prevLeagueId = league.previous_league_id;
 			e++;
@@ -235,7 +291,10 @@ SleeperTools = (function () {
 		prevLeagueId = tools.B_LEAGUE_SLEEPER_ID;
 		e = 0;
 		while(prevLeagueId != null && e < 50){
-			allSleeperLeagueIds.push(prevLeagueId);
+			allSleeperLeagueIds.push({
+				LeagueId: prevLeagueId,
+				LeagueType: "B League"
+			});
 			const league = await fetch(getLeagueRestAPI(prevLeagueId)).then((res) => res.json());
 			prevLeagueId = league.previous_league_id;
 			e++;
@@ -279,18 +338,23 @@ SleeperTools = (function () {
 		return response;
 	}
 
-	// Get unique list of all users in both sleeper leagues.
-	tools.getAllUsers = async function () {
+	// Get unique list of all users in both sleeper leagues for the GM List page.
+	tools.getGmList = async function () {
 		const users = await getUsers_Unique();
 
 		let jsonData = [];
 		users.forEach((item) => {
-            // Get the values of the current object in the JSON data
+			var atrURL = "<a href=\"b3fl.com/all-time-records/?user=" + item.user_id + "\">Record</a>";
+			var profileUrl = "<a href=\"b3fl.com/gm-profiles/?user=" + item.user_id + "\">Profile</a>";
+
+            // Get the values of the current object in the JSON data 
 			jsonData.push({
-				"": "<figure class=\"wp-block-image size-large\"><img src=\"https://sleepercdn.com/avatars/thumbs/" + item.avatar + "\"></img></figure>",
+				"": "<img src=\"https://sleepercdn.com/avatars/" + item.avatar + "\" alt=\"Player Avatar\"></img>",
 				"Sleeper Name": item.display_name,
 				"Manager": userReals[item.user_id].name,
-				"League": beautifyLeagueField(userReals[item.user_id].currentLeague)
+				"League": beautifyLeagueField(userReals[item.user_id].currentLeague),
+				"All Time Record": atrURL,
+				"Profile": profileUrl
 			});
          });
 
@@ -306,7 +370,7 @@ SleeperTools = (function () {
 	}
 
 	// Get unique list of all users in both sleeper leagues.
-	tools.getAllUsersForMatchup = async function () {
+	tools.getAllUserIds = async function () {
 		const users = await getUsers_Unique();
 
 		let jsonData = [];
@@ -320,6 +384,129 @@ SleeperTools = (function () {
          });
 
 		 jsonData.sort((a,b) => a.Manager.localeCompare(b.Manager)); // b - a for reverse sort
+
+		return jsonData;
+	};
+
+	function groupAllRecordsByYear(allRecords){
+		var groupedRecords = { }; //json
+
+		allRecords.forEach(record => { 
+			var year = record.year;
+			if (!groupedRecords[year]){
+				groupedRecords[year] = [];
+			}
+			groupedRecords[year].push(
+				record
+			);
+		});
+
+		return groupedRecords;
+	}
+
+	function calculateRecordForYear(yearRecord){
+		var wins = 0, losses = 0, ties = 0;
+		var year = 0;
+		var playoffWins = 0, playoffLosses = 0;
+		yearRecord.forEach(week => {
+			if (week.game_type == tools.constants.GAME_TYPE_REGULAR){
+				if (week.outcome == tools.constants.OUTCOME_TYPE_WIN){
+					wins++;
+				} else if (week.outcome == tools.constants.OUTCOME_TYPE_LOSS){
+					losses++;
+				} else if (week.outcome == tools.constants.OUTCOME_TYPE_TIE){
+					ties++;
+				}
+			} else if (week.game_type == tools.constants.GAME_TYPE_PLAYOFF){
+				if (week.outcome == tools.constants.OUTCOME_TYPE_WIN){
+					playoffWins++;
+				} else if (week.outcome == tools.constants.OUTCOME_TYPE_LOSS){
+					playoffLosses++;
+				}
+				//TODO: playoff stats
+			}
+			year = week.year;
+		});
+		var game_count = wins + losses + ties;
+
+		var record = {
+			wins: wins,
+			losses: losses,
+			ties: ties,
+			year: year,
+			game_count: game_count,
+			record_string: wins + " - " + losses + " - " + ties,
+			win_percent: wins / game_count,
+			title_win: playoffWins == 3
+		};
+		
+		return record;
+	}
+
+	// Get unique list of all users in both sleeper leagues for the GM List page.
+	tools.getGmProfile = async function (sleeperId) {
+		var allRecords = await tools.getAllTimeRecordData(sleeperId); // array
+		var allRecords_groupedByYear = groupAllRecordsByYear(allRecords);
+
+		let jsonData = [];
+
+		var niceScores = 0;
+		var avgPtsFor = 0;
+		var avgPtsAgainst = 0;
+		var recordCount = 0;
+		allRecords.forEach(record => { 
+			var score = parseFloat(record.owner_score);
+			if (score >= 69 && score < 70) {
+				niceScores++;
+			}
+			avgPtsFor += parseFloat(record.owner_score);
+			avgPtsAgainst += parseFloat(record.opponent_score);
+
+			recordCount++;
+		});
+
+		avgPtsFor /= recordCount;
+		avgPtsAgainst /= recordCount;
+
+		var mostWins = 0;
+		var mostWinsRecord = null;
+		var mostLosses = 0; 
+		var mostLossesRecord = null;
+		var avgWinPct = 0;
+		var yearsPlayed = 0;
+		var titles = 0;
+		for(var curYear in allRecords_groupedByYear) {
+			curRecords = allRecords_groupedByYear[curYear]; // represents a single year in records.
+			var record = calculateRecordForYear(curRecords);
+			avgWinPct += record.win_percent;
+			yearsPlayed++;
+
+			if (record.wins > mostWins){
+				mostWins = record.wins;
+				mostWinsRecord = record;
+			}
+			if (record.losses > mostLosses){
+				mostLosses = record.losses;
+				mostLossesRecord = record;
+			}
+			if (record.title_win){
+				titles++;
+			}
+		}
+		avgWinPct /= yearsPlayed;
+
+		let gmProfile = {
+			titles: titles,
+			seasonBest: mostWinsRecord.record_string + " (" + mostWinsRecord.year + ")",
+			seasonWorst: mostLossesRecord.record_string + " (" + mostLossesRecord.year + ")",
+			avgPtsFor: avgPtsFor.toFixed(2),
+			avgPtsAgainst: avgPtsAgainst.toFixed(2),
+			avgWinPercent: avgWinPct.toFixed(3),
+			niceScores: niceScores,
+			gamesPlayed: recordCount,
+			yearsPlayed: yearsPlayed
+		}
+		jsonData.push(gmProfile);
 
 		return jsonData;
 	};
@@ -352,7 +539,7 @@ SleeperTools = (function () {
 		return records;
 	};
 
-	function getGameType(year, week, lastWeeksOutcome, isPostElim){
+	function getGameType(year, week, lastWeeksOutcome, thisWeeksOutcome, isPostElim, madeWinnersBracket){
 		var y = parseInt(year);
 		var w = parseInt(week);
 
@@ -363,14 +550,18 @@ SleeperTools = (function () {
 		// Spaghetti monster...
 		if (y >= 2021) { // Playoffs are weeks 15-17
 			if (w >= 15){ // is playoffs
-				if (w >= 16 && lastWeeksOutcome == "loss"){
+				if (!madeWinnersBracket) return tools.constants.GAME_TYPE_ELIMINATED;
+
+				if (w >= 16 && (lastWeeksOutcome == tools.constants.OUTCOME_TYPE_LOSS)){
 					return tools.constants.GAME_TYPE_ELIMINATED;
 				} 
 				return tools.constants.GAME_TYPE_PLAYOFF
 			}
 		} else { // Playoffs are weeks 14-16
 			if (w >= 14){ // is playoffs
-				if (w >= 15 && lastWeeksOutcome == "loss"){
+				if (!madeWinnersBracket) return tools.constants.GAME_TYPE_ELIMINATED;
+
+				if (w >= 15 && (lastWeeksOutcome == tools.constants.OUTCOME_TYPE_LOSS)){
 					return tools.constants.GAME_TYPE_ELIMINATED;
 				} 
 				return tools.constants.GAME_TYPE_PLAYOFF
@@ -383,8 +574,7 @@ SleeperTools = (function () {
 
 	// SLEEPER Records.
 	async function getMatchupsSleeper(sleeperId1, sleeperId2) {
-		// GOING FORWARD: If any leagues end up as a "previous" league need to add their new IDs.
-		// Could modify this so that only the newest leagueIds are included, and it recursively finds all prev leagues. Dont know how sleeper does this.
+		// Will return most current league IDs and all previous years from sleeper.
 		var allLeagues = await getSleeperLeagueIdsAndAllPreviousLeagueIds();
 
 		var records = [];
@@ -395,7 +585,9 @@ SleeperTools = (function () {
 
 		// If you played Jers ID in sleeper in B League 2022 - you actually played Papa T. If in , search using jers sleeperId since his account controlled the team
 
-		for (var leagueId of allLeagues){
+		for (var curLeague of allLeagues){
+			var leagueId = curLeague.LeagueId;
+
 			const leagueRosterData = await fetch(getLeagueRestAPI(leagueId) + "/rosters")
                 .then((res) => res.json());
 			const leagueData = await fetch(getLeagueRestAPI(leagueId))
@@ -455,7 +647,7 @@ SleeperTools = (function () {
 					//console.log("week " + week + " Jake " + matchupId1 + " rimon " + matchupId2);
 
 					// Only record result if they matched eachother that week.
-					if (matchupId1 == matchupId2 && !(user1score <= 0 && user2score <= 0)){
+					if (matchupId1 == matchupId2 && !(user1score < 0 && user2score < 0)){
 						outcome = outcomeLabelFromScore(user1score, user2score);
 						year = leagueData.season;
 
@@ -466,7 +658,8 @@ SleeperTools = (function () {
 							week: "" + week, // convert to str
 							year: ""+year,
 							type: "Sleeper",
-							game_type: "none"
+							game_type: "none",
+							league_type: curLeague.LeagueType
 						});
 					}
 				}
@@ -490,12 +683,30 @@ SleeperTools = (function () {
 
 		// If you played Jers ID in sleeper in B League 2022 - you actually played Papa T. If in , search using jers sleeperId since his account controlled the team
 
-		for (var leagueId of allLeagues){
+		for (var curLeague of allLeagues){
+			var leagueId = curLeague.LeagueId;
+
 			const leagueRosterData = await fetch(getLeagueRestAPI(leagueId) + "/rosters")
                 .then((res) => res.json());
 			const leagueData = await fetch(getLeagueRestAPI(leagueId))
                 .then((res) => res.json());
+			const playoffData = await fetch(getLeagueRestAPI(leagueId) + "/winners_bracket")
+                .then((res) => res.json());
 
+			var winningRosters = [];
+			playoffData.forEach(round => {
+				if (winningRosters.indexOf(round.w) === -1){
+					winningRosters.push(round.w);
+				}
+				if (winningRosters.indexOf(round.l) === -1){
+					winningRosters.push(round.l);
+				}
+			});
+
+			//console.log(leagueData.season);
+			//console.log(playoffData);
+			//console.log(winningRosters);
+			
 			var temporarySleeperID = sleeperId;
 
 			// If its the 2022 B league season
@@ -541,11 +752,12 @@ SleeperTools = (function () {
 
 					// Only record result if they matched eachother that week.
 					
-					if (!(user1score <= 0 && user2score <= 0)){
+					if (!(user1score < 0 && user2score < 0)){
 						outcome = outcomeLabelFromScore(user1score, user2score);
 						year = leagueData.season;
 
-						var gametype = getGameType(year, week, lastPlayoffResult, isPlayoffsPostElim);
+						var madeWinnersBracket = winningRosters.indexOf(rosterId) != -1; // Is our roster id in winners bracket
+						var gametype = getGameType(year, week, lastPlayoffResult, outcome, isPlayoffsPostElim, madeWinnersBracket);
 						if (gametype == tools.constants.GAME_TYPE_ELIMINATED) isPlayoffsPostElim = true;
 						lastPlayoffResult = outcome;
 
@@ -557,7 +769,8 @@ SleeperTools = (function () {
 							year: ""+year,
 							type: "Sleeper",
 							// Regular, Playoff, PlayoffPostElimination
-							game_type: gametype
+							game_type: gametype,
+							league_type: curLeague.LeagueType
 						});
 					}
 				}
@@ -615,7 +828,7 @@ SleeperTools = (function () {
 						var opScore = parseFloat(user1games[gameId].opponent_score);
 						var outcome = outcomeLabelFromScore(score, opScore);
 
-						if (!isPaPaT_Rule && !(score <= 0 && opScore <= 0)){
+						if (!isPaPaT_Rule && !(score < 0 && opScore < 0)){
 							records.push({
 								owner_score: ""+score,
 								opponent_score: ""+opScore,
@@ -623,7 +836,8 @@ SleeperTools = (function () {
 								week: ""+user1games[gameId].week,
 								year: ""+year,
 								type: "NFL.com",
-								game_type: "none"
+								game_type: "none",
+								league_type: "A League"
 							});
 						}
 					}
@@ -658,7 +872,7 @@ SleeperTools = (function () {
 						var opScore = parseFloat(user1games[gameId].opponent_score);
 						var outcome = outcomeLabelFromScore(score, opScore);
 
-						if (!isJer_Rule && !(score <= 0 && opScore <= 0)){
+						if (!isJer_Rule && !(score < 0 && opScore < 0)){
 							records.push({
 								owner_score: ""+score,
 								opponent_score: ""+opScore,
@@ -666,7 +880,8 @@ SleeperTools = (function () {
 								week: ""+user1games[gameId].week,
 								year: "2021",
 								type: "NFL.com",
-								game_type: "none"
+								game_type: "none",
+								league_type: "B League"
 							});
 						}
 					}
@@ -709,6 +924,13 @@ SleeperTools = (function () {
 
 			if (user1Id != -1){
 				var user1games = teams[user1Id].games;
+				var rankString = teams[user1Id].rank.split("\n")[1]; // bit hacky
+				rankString = rankString.replace("(", "");
+				rankString = rankString.replace(")", "");
+				var finishingRank = parseInt(rankString); // Ranks appear like "1\n(4)"
+				var madeWinnersBracket = finishingRank <= 8;
+
+				//console.log(year + " " + rankString + " " + finishingRank+ " " + madeWinnersBracket);
 
 				var lastPlayoffResult = "";
 				var isPlayoffsPostElim = false;
@@ -719,11 +941,12 @@ SleeperTools = (function () {
 						var opScore = parseFloat(user1games[gameId].opponent_score);
 						var outcome = outcomeLabelFromScore(score, opScore);
 
-						var gametype = getGameType(year, user1games[gameId].week, lastPlayoffResult, isPlayoffsPostElim);
+						
+						var gametype = getGameType(year, user1games[gameId].week, lastPlayoffResult, outcome, isPlayoffsPostElim, madeWinnersBracket);
 						if (gametype == tools.constants.GAME_TYPE_ELIMINATED) isPlayoffsPostElim = true;
 						lastPlayoffResult = outcome;
 
-						if (!isPaPaT_Rule && !(score <= 0 && opScore <= 0)){
+						if (!isPaPaT_Rule && !(score < 0 && opScore < 0)){
 							records.push({
 								owner_score: ""+score,
 								opponent_score: ""+opScore,
@@ -731,7 +954,8 @@ SleeperTools = (function () {
 								week: ""+user1games[gameId].week,
 								year: ""+year,
 								type: "NFL.com",
-								game_type: gametype
+								game_type: gametype,
+								league_type: "A League"
 							});
 						}
 					
@@ -755,6 +979,13 @@ SleeperTools = (function () {
 
 			if (user1Id != -1){
 				var user1games = teams[user1Id].games;
+				var rankString = teams[user1Id].rank.split("\n")[1]; // bit hacky
+				rankString = rankString.replace("(", "");
+				rankString = rankString.replace(")", "");
+				var finishingRank = parseInt(rankString); // Ranks appear like "1\n(4)"
+				var madeWinnersBracket = finishingRank <= 8;
+
+				//console.log(year + " " + rankString + " " + finishingRank+ " " + madeWinnersBracket);
 
 				var lastPlayoffResult = "";
 				var isPlayoffsPostElim = false;
@@ -765,11 +996,11 @@ SleeperTools = (function () {
 						var opScore = parseFloat(user1games[gameId].opponent_score);
 						var outcome = outcomeLabelFromScore(score, opScore);
 
-						var gametype = getGameType("2021", user1games[gameId].week, lastPlayoffResult, isPlayoffsPostElim);
+						var gametype = getGameType("2021", user1games[gameId].week, lastPlayoffResult, outcome, isPlayoffsPostElim, madeWinnersBracket);
 						if (gametype == tools.constants.GAME_TYPE_ELIMINATED) isPlayoffsPostElim = true;
 						lastPlayoffResult = outcome;
 
-						if (!isJer_Rule && !(score <= 0 && opScore <= 0)){
+						if (!isJer_Rule && !(score < 0 && opScore < 0)){
 							records.push({
 								owner_score: ""+score,
 								opponent_score: ""+opScore,
@@ -777,7 +1008,8 @@ SleeperTools = (function () {
 								week: ""+user1games[gameId].week,
 								year: "2021",
 								type: "NFL.com",
-								game_type: gametype
+								game_type: gametype,
+								league_type: "B League"
 							});
 						}
 					
@@ -790,6 +1022,9 @@ SleeperTools = (function () {
 	}
 
 	function outcomeLabelFromScore(score, opponentScore){
+		if (score == 0 && opponentScore == 0){
+			return tools.constants.OUTCOME_TYPE_NO_CONTEST;
+		}
 		if (score == opponentScore){
 			return tools.constants.OUTCOME_TYPE_TIE;
 		}
