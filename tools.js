@@ -6,6 +6,10 @@ SleeperTools = (function () {
 		return "https://api.sleeper.app/v1/league/" + leagueId;
 	}
 
+	function getUserRestAPI(sleeperId) {
+		return "https://api.sleeper.app/v1/user/" + sleeperId;
+	}
+
 	// ************** MOST CURRENT Sleeper League IDs ***********************
 	tools.A_LEAGUE_SLEEPER_ID = "968583157932937216";
 	tools.B_LEAGUE_SLEEPER_ID = "992194800943939584";
@@ -181,8 +185,8 @@ SleeperTools = (function () {
 		},
 		{
 			name: "Marty",
-			sleeperId_current: "867970353417363456",
-			sleeperIds_old: [],
+			sleeperId_current: "998276027312889856",
+			sleeperIds_old: ["867970353417363456"],
 			legacyId: "userId-962198",
 			currentLeague: tools.constants.A_LEAGUE_NAME
 		},
@@ -230,76 +234,25 @@ SleeperTools = (function () {
 		return getUserReal(sleeperId) != dummyUser;
 	}
 
-	// Get a list of users from sleeper leagueId
-	tools.getUsers = async function (leagueId) {
-		const response = await fetch(getLeagueRestAPI(leagueId) + "/users")
+	// Loads sleeper user data for a single user
+	async function getSleeperUserData(sleeperId){
+		const response = await fetch(getUserRestAPI(sleeperId))
                 .then((res) => res.json());
-
-		let jsonData = [];
-
-		response.forEach((item) => {
-            // Get the values of the current object in the JSON data
-			jsonData.push({
-				"Username": item.display_name,
-				"User ID": item.user_id
-			});
-         });
-
-		return jsonData;
-	};
-
-	// local function, prevents duplicates when retrieving all sleeper users in leagues.
-	function userJsonContains(a, obj) {
-		var i = a.length;
-		while (i--) {
-		   if (a[i].user_id === obj.user_id) {
-			   return true;
-		   }
-		}
-		return false;
-	}
-
-	async function getUsers_Unique(){
-		const response = await fetch(getLeagueRestAPI(tools.A_LEAGUE_SLEEPER_ID) + "/users")
-                .then((res) => res.json());
-
-		const response2 = await fetch(getLeagueRestAPI(tools.A_LEAGUE_SLEEPER_ID_2022_SEASON) + "/users")
-		.then((res) => res.json());
-
-		const response3 = await fetch(getLeagueRestAPI(tools.B_LEAGUE_SLEEPER_ID) + "/users")
-		.then((res) => res.json());
-		
-		response2.forEach((item) => {
-			if (!userJsonContains(response, item)){
-				response.push(item);
-			}
-        });
-		response3.forEach((item) => {
-            if (!userJsonContains(response, item)){
-				response.push(item);
-			}
-        });
-
 		return response;
 	}
 
 	// Get unique list of all users in both sleeper leagues.
 	tools.getAllUserIds = async function () {
-		const users = await getUsers_Unique();
-
 		let jsonData = [];
-		users.forEach((item) => {
-			var sleeperId = item.user_id;
-			var user = getUserReal(sleeperId);
-
+		userReals.forEach((user) => {
             // Get the values of the current object in the JSON data
 			jsonData.push({
-				SleeperUserId: sleeperId,
+				SleeperUserId: user.sleeperId_current,
 				Manager: user.name
 			});
          });
 
-		 jsonData.sort((a,b) => a.Manager.localeCompare(b.Manager)); // b - a for reverse sort
+		jsonData.sort((a,b) => a.Manager.localeCompare(b.Manager)); // b - a for reverse sort
 
 		return jsonData;
 	};
@@ -401,6 +354,34 @@ SleeperTools = (function () {
 		container.appendChild(table) // Append the table to the container element
 	};
 
+	tools.generateCsvFile = function (jsonData, fileNameNoExtension){
+		if (!jsonData[0]) return;
+		if (!fileNameNoExtension) fileNameNoExtension = "B3FL-Download";
+
+		let csvContent = "data:text/csv;charset=utf-8,";
+		let cols = Object.keys(jsonData[0]);
+		let csvHeaders = cols.join(",");
+		csvContent += csvHeaders + "\r\n";
+
+		jsonData.forEach((item) => {
+			let vals = Object.values(item);
+			let row = vals.join(",");
+			csvContent += row + "\r\n";
+		});
+
+		var encodedUri = encodeURI(csvContent);
+		//console.log(csvContent);
+		//console.log(encodedUri);
+		//window.open(encodedUri);
+
+		var link = document.createElement("a");
+		link.setAttribute("href", encodedUri);
+		link.setAttribute("download", fileNameNoExtension+".csv");
+		document.body.appendChild(link); // Required for FF
+		link.click();
+		link.remove();
+	};
+
 	// List of latest sleeper league and all previous sleeper league ids.
 	async function getSleeperLeagueIdsAndAllPreviousLeagueIds(){
 		var allSleeperLeagueIds = [];
@@ -434,27 +415,26 @@ SleeperTools = (function () {
 
 	// Get unique list of all users in both sleeper leagues for the GM List page.
 	tools.getGmList = async function () {
-		const users = await getUsers_Unique();
-
 		let jsonData = [];
-		users.forEach((item) => {
-			var atrURL = "<a style=\"color:black;\" href=\"b3fl.com/all-time-records/?user=" + item.user_id + "\">Record</a>";
-			var profileUrl = "<a style=\"color:black;\" href=\"b3fl.com/gm-profiles/?user=" + item.user_id + "\">Stats</a>";
+		for(let i = 0; i<userReals.length; i++){
+			const userReal = userReals[i];
+			const userData = await getSleeperUserData(userReal.sleeperId_current);
 
-			var user = getUserReal(item.user_id);
+			var atrURL = "<a style=\"color:black;\" href=\"b3fl.com/all-time-records/?user=" + userReal.sleeperId_current + "\">Record</a>";
+			var profileUrl = "<a style=\"color:black;\" href=\"b3fl.com/gm-profiles/?user=" + userReal.sleeperId_current + "\">Stats</a>";
 
             // Get the values of the current object in the JSON data 
 			jsonData.push({
-				"": "<img src=\"https://sleepercdn.com/avatars/" + item.avatar + "\" alt=\"Player Avatar\"></img>",
-				"Sleeper Name": item.display_name,
-				"Manager": user.name,
-				"League": beautifyLeagueField(user.currentLeague),
+				"": "<img src=\"https://sleepercdn.com/avatars/" + userData.avatar + "\" alt=\"Player Avatar\"></img>",
+				"Sleeper Name": userData.display_name,
+				"Manager": userReal.name,
+				"League": beautifyLeagueField(userReal.currentLeague),
 				"All Time Record": atrURL,
 				"Stats": profileUrl
 			});
-         });
+		}
 
-		 jsonData.sort((a,b) => a.Manager.localeCompare(b.Manager)); // b - a for reverse sort
+		jsonData.sort((a,b) => a.Manager.localeCompare(b.Manager)); // b - a for reverse sort
 
 		return jsonData;
 	};
@@ -591,27 +571,63 @@ SleeperTools = (function () {
 	// Get unique list of all users in both sleeper leagues.
 	// timespan can be "all", "sleeperOnly", "legacyOnly"
 	tools.getAllTimeRecordData = async function (sleeperId) {
+		var userReal = getUserReal(sleeperId);
 		
-		var legacyRecords = await getAllTimeRecordsLegacy(sleeperId); // array
-		var sleeperRecords = await getAllTimeRecordsSleeper(sleeperId);
-				
+		var legacyRecords = await getAllTimeRecordsLegacy(sleeperId); // Legacy records will always work as long as userReals can be retrieved
+		var sleeperRecords = await getAllTimeRecordsSleeper(sleeperId); // If user has old sleeper ids, this needs to be called again.
+
 		var records = [];
 		legacyRecords.forEach(record => { records.push(record);});
 		sleeperRecords.forEach(record => { records.push(record);});
+
+		// Loop through the users previous sleeper ids to collect old records.
+		for (let i = 0; i < userReal.sleeperIds_old.length; i++){
+			var oldRecords = await getAllTimeRecordsSleeper(userReal.sleeperIds_old[i]);
+			oldRecords.forEach(record => { records.push(record);});
+		}
+					
+		// Sort by Year/Week
+		records.sort(function (a, b) {
+			return a.year.localeCompare(b.year) || parseInt(a.week) - parseInt(b.week);
+		});
 
 		return records;
 	};
 
+	function getAllUserSleeperIds(sleeperId){
+		var userReal = getUserReal(sleeperId);
+
+		var ids = [];
+		ids.push(userReal.sleeperId_current);
+
+		return ids.concat(userReal.sleeperIds_old);
+	}
+
 	// Get unique list of all users in both sleeper leagues.
 	// timespan can be "all", "sleeperOnly", "legacyOnly"
 	tools.getMatchupData = async function (sleeperId1, sleeperId2) {
+		var user1Ids = getAllUserSleeperIds(sleeperId1);
+		var user2Ids = getAllUserSleeperIds(sleeperId2);
 		
 		var legacyRecords = await getMatchupsLegacy(sleeperId1, sleeperId2); // array
-		var sleeperRecords = await getMatchupsSleeper(sleeperId1, sleeperId2);
+		//var sleeperRecords = await getMatchupsSleeper(sleeperId1, sleeperId2);
 				
 		var records = [];
 		legacyRecords.forEach(record => { records.push(record);});
-		sleeperRecords.forEach(record => { records.push(record);});
+		//sleeperRecords.forEach(record => { records.push(record);});
+
+		// Loop through the user(s) previous sleeper ids to collect old records.
+		for (let i = 0; i < user1Ids.length; i++){
+			for (let j = 0; j < user2Ids.length; j++){
+				var sleeperRecords = await getMatchupsSleeper(user1Ids[i], user2Ids[j]);
+				sleeperRecords.forEach(record => { records.push(record);});
+			}
+		}
+
+		// Sort by Year/Week
+		records.sort(function (a, b) {
+			return a.year.localeCompare(b.year) || parseInt(a.week) - parseInt(b.week);
+		});
 
 		return records;
 	};
@@ -656,9 +672,9 @@ SleeperTools = (function () {
 
 		var records = [];
 
-		var isPaPaT_Rule = sleeperId1 == tools.constants.PAPA_T_SLEEPER_ID_RECORD_CORRECTION || sleeperId2 == tools.constants.PAPA_T_SLEEPER_ID_RECORD_CORRECTION; // If you played him in legacy, pull using jers NFL ID
-		var isJer_Rule = sleeperId1 == tools.constants.JER_SLEEPER_ID_RECORD_CORRECTION || sleeperId2 == tools.constants.JER_SLEEPER_ID_RECORD_CORRECTION;
-		if (isPaPaT_Rule && isJer_Rule) return records;
+		// var isPaPaT_Rule = sleeperId1 == tools.constants.PAPA_T_SLEEPER_ID_RECORD_CORRECTION || sleeperId2 == tools.constants.PAPA_T_SLEEPER_ID_RECORD_CORRECTION; // If you played him in legacy, pull using jers NFL ID
+		// var isJer_Rule = sleeperId1 == tools.constants.JER_SLEEPER_ID_RECORD_CORRECTION || sleeperId2 == tools.constants.JER_SLEEPER_ID_RECORD_CORRECTION;
+		// if (isPaPaT_Rule && isJer_Rule) return records;
 
 		// If you played Jers ID in sleeper in B League 2022 - you actually played Papa T. If in , search using jers sleeperId since his account controlled the team
 
@@ -679,18 +695,14 @@ SleeperTools = (function () {
 				//use jers sleeperid for records.
 				if (sleeperId1 == tools.constants.PAPA_T_SLEEPER_ID_RECORD_CORRECTION){
 					temporarySleeperID1 = tools.constants.JER_SLEEPER_ID_RECORD_CORRECTION;
-					
 				} else if (sleeperId2 == tools.constants.PAPA_T_SLEEPER_ID_RECORD_CORRECTION){
 					temporarySleeperID2 = tools.constants.JER_SLEEPER_ID_RECORD_CORRECTION;
-					
 				}
 
 				if (sleeperId1 == tools.constants.JER_SLEEPER_ID_RECORD_CORRECTION){
 					temporarySleeperID1 = "";
-				
 				} else if (sleeperId2 == tools.constants.JER_SLEEPER_ID_RECORD_CORRECTION){
 					temporarySleeperID2 = "";
-					
 				}
 			}
 

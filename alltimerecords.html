@@ -29,23 +29,42 @@
     <div class="loader" id="spinner" style="display: none;"></div>
 
     <div id="pageTableDiv"></div>
+
+    <div id="downloadCsvDiv" style="display: none;">
+        <button onclick="downloadCsv()">Download CSV</button>
+    </div>
    
     <script>
         var allCurOwners = [];
         var container = document.getElementById("pageTableDiv");
         var spinner = document.getElementById("spinner");
+        var downloadCsvDiv = document.getElementById("downloadCsvDiv");
         var timespanDropdown = document.getElementById("timespan");
         var ownerDropdown = document.getElementById("owner");
         var leagueTypeDropdown = document.getElementById("leagueType");
         var postElimPlayoffsCheckbox = document.getElementById("showPostElimPlayoffGames");
         var currentAllTimeData;
+        var currentlyDisplayedData;
 
         function setLoading(isLoading) {
             spinner.style.display = isLoading ? "block" : "none";
+            downloadCsvDiv.style.display = !isLoading ? "block" : "none";
             timespanDropdown.disabled = isLoading;
             ownerDropdown.disabled = isLoading;
             postElimPlayoffsCheckbox.disabled = isLoading;
             leagueTypeDropdown.disabled = isLoading;
+        }
+
+        function downloadCsv(){
+            if (currentlyDisplayedData){
+                console.log("Generating CSV ...");
+                var today = new Date();
+                var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+                var user = ownerDropdown.options[ownerDropdown.selectedIndex].innerHTML;
+
+                var fileName = user + "_AllTimeRecords_" + date; 
+                SleeperTools.generateCsvFile(currentlyDisplayedData, fileName);
+            }
         }
 
         function buildAllRecordsIntoCombined(records){
@@ -148,6 +167,7 @@
             
             // Refresh displayed table.
             SleeperTools.generateTable(container, beautifyForTableDisplay(dataToDisplay));
+            currentlyDisplayedData = dataToDisplay;
         }
 
         function checkUserParam(){
