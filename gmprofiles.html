@@ -142,7 +142,7 @@
 
             // optional sleeper userId
             const userParam = urlParams.get("user");
-            if (SleeperTools.doesUserExist(userParam)){
+            if (SleeperTools.doesUserRealExist(userParam)){
                 ownerDropdown.value = userParam;
             }
         }

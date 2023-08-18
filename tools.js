@@ -34,132 +34,11 @@ SleeperTools = (function () {
 		OUTCOME_TYPE_NO_CONTEST: "noContest",
 	}
 
-	// Sleeper ID -> Object
-	// For use internally on tools.js
-	var userReals = {
-		"471702444481441792": {
-			name: "Jer",
-			legacyId: "userId-90093",
-			currentLeague: tools.constants.A_LEAGUE_NAME
-		},
-		"867462835893080064": {
-			name: "Nate",
-			legacyId: "userId-27062481",
-			currentLeague: tools.constants.A_LEAGUE_NAME
-		},
-		"867562511770255360": {
-			name: "Caolan",
-			legacyId: "userId-95527",
-			currentLeague: tools.constants.A_LEAGUE_NAME
-		},
-		"867601213447897088": {
-			name: "Dalley",
-			legacyId: "userId-91161",
-			currentLeague: tools.constants.A_LEAGUE_NAME
-		},
-		"869618771407556608": {
-			name: "Rimon",
-			legacyId: "userId-91908",
-			currentLeague: tools.constants.A_LEAGUE_NAME
-		},
-		"441653692567908352": {
-			name: "Omar",
-			legacyId: "userId-5318397",
-			currentLeague: tools.constants.B_LEAGUE_NAME
-		},
-		"471826036959473664": {
-			name: "Ricky",
-			legacyId: "userId-27845667",
-			currentLeague: tools.constants.A_LEAGUE_NAME
-		},
-		"731243643578490880": {
-			name: "Alex",
-			legacyId: "userId-19416897",
-			currentLeague: tools.constants.B_LEAGUE_NAME
-		},
-		"865480383385448448": {
-			name: "Picco",
-			legacyId: "userId-28536059",
-			currentLeague: tools.constants.B_LEAGUE_NAME
-		},
-		"865596427626201088": {
-			name: "Jordan S.",
-			legacyId: "userId-130280",
-			currentLeague: tools.constants.B_LEAGUE_NAME
-		},
-		"866400340310917120": {
-			name: "Eric",
-			legacyId: "userId-144377",
-			currentLeague: tools.constants.A_LEAGUE_NAME
-		},
-		"867272838229454848": {
-			name: "Tom",
-			legacyId: "userId-14712314",
-			currentLeague: tools.constants.B_LEAGUE_NAME
-		},
-		"867294931482505216": {
-			name: "Ryan",
-			legacyId: "userId-25196559",
-			currentLeague: tools.constants.B_LEAGUE_NAME
-		},
-		"867433255367008256": {
-			name: "Jordan I.",
-			legacyId: "userId-13060178",
-			currentLeague: tools.constants.B_LEAGUE_NAME
-		},
-		"867479730138583040": {
-			name: "Liam",
-			legacyId: "userId-25169661",
-			currentLeague: tools.constants.B_LEAGUE_NAME
-		},
-		"867489506998267904": {
-			name: "Mike",
-			legacyId: "userId-7530198",
-			currentLeague: tools.constants.A_LEAGUE_NAME
-		},
-		"867531909708840960": {
-			name: "Zack",
-			legacyId: "userId-5280198",
-			currentLeague: tools.constants.A_LEAGUE_NAME
-		},
-		"867587986001403904": {
-			name: "Scott",
-			legacyId: "userId-5339416",
-			currentLeague: tools.constants.A_LEAGUE_NAME
-		},
-		"867593986880229376": {
-			name: "Jake",
-			legacyId: "userId-90171",
-			currentLeague: tools.constants.A_LEAGUE_NAME
-		},
-		"867598805816795136": {
-			name: "Tikl",
-			legacyId: "userId-7830798",
-			currentLeague: tools.constants.A_LEAGUE_NAME
-		},
-		"867970353417363456": {
-			name: "Marty",
-			legacyId: "userId-962198",
-			currentLeague: tools.constants.A_LEAGUE_NAME
-		},
-		"867598396356259840": {
-			name: "Ty",
-			legacyId: "userId-14721116",
-			currentLeague: tools.constants.B_LEAGUE_NAME
-		},
-		"868693802389540864": {
-			name: "Papa T",
-			legacyId: "userId-90093",
-			currentLeague: tools.constants.A_LEAGUE_NAME
-		},
-		"868705613276925952": {
-			name: "Dan",
-			legacyId: "userId-7401235",
-			currentLeague: tools.constants.B_LEAGUE_NAME
-		}
-	}
+	/*
+		START USER AREA
+	*/
 
-	var userReals2 = [
+	var userReals = [
 		{
 			name: "Jer",
 			sleeperId_current: "471702444481441792",
@@ -338,22 +217,10 @@ SleeperTools = (function () {
 		currentLeague: "None"
 	}
 
-	function getUserMetaData(sleeperId) {
-		if (!userReals[sleeperId]){
-			return dummyUser;
-		} else {
-			return userReals[sleeperId];
-		}
-	}
-
-	tools.doesUserExist = function (sleeperId) {
-		return userReals[sleeperId] != null;
-	}
-
 	function getUserReal(sleeperId){
-		for (let i = 0; i < userReals2.length; i++) {
-			if (userReals2[i].sleeperId_current == sleeperId || userReals2[i].sleeperIds_old.includes(sleeperId)){
-				return userReals2[i];
+		for (let i = 0; i < userReals.length; i++) {
+			if (userReals[i].sleeperId_current == sleeperId || userReals[i].sleeperIds_old.includes(sleeperId)){
+				return userReals[i];
 			}
 		}
 		return dummyUser;
@@ -362,6 +229,84 @@ SleeperTools = (function () {
 	tools.doesUserRealExist = function (sleeperId) {
 		return getUserReal(sleeperId) != dummyUser;
 	}
+
+	// Get a list of users from sleeper leagueId
+	tools.getUsers = async function (leagueId) {
+		const response = await fetch(getLeagueRestAPI(leagueId) + "/users")
+                .then((res) => res.json());
+
+		let jsonData = [];
+
+		response.forEach((item) => {
+            // Get the values of the current object in the JSON data
+			jsonData.push({
+				"Username": item.display_name,
+				"User ID": item.user_id
+			});
+         });
+
+		return jsonData;
+	};
+
+	// local function, prevents duplicates when retrieving all sleeper users in leagues.
+	function userJsonContains(a, obj) {
+		var i = a.length;
+		while (i--) {
+		   if (a[i].user_id === obj.user_id) {
+			   return true;
+		   }
+		}
+		return false;
+	}
+
+	async function getUsers_Unique(){
+		const response = await fetch(getLeagueRestAPI(tools.A_LEAGUE_SLEEPER_ID) + "/users")
+                .then((res) => res.json());
+
+		const response2 = await fetch(getLeagueRestAPI(tools.A_LEAGUE_SLEEPER_ID_2022_SEASON) + "/users")
+		.then((res) => res.json());
+
+		const response3 = await fetch(getLeagueRestAPI(tools.B_LEAGUE_SLEEPER_ID) + "/users")
+		.then((res) => res.json());
+		
+		response2.forEach((item) => {
+			if (!userJsonContains(response, item)){
+				response.push(item);
+			}
+        });
+		response3.forEach((item) => {
+            if (!userJsonContains(response, item)){
+				response.push(item);
+			}
+        });
+
+		return response;
+	}
+
+	// Get unique list of all users in both sleeper leagues.
+	tools.getAllUserIds = async function () {
+		const users = await getUsers_Unique();
+
+		let jsonData = [];
+		users.forEach((item) => {
+			var sleeperId = item.user_id;
+			var user = getUserReal(sleeperId);
+
+            // Get the values of the current object in the JSON data
+			jsonData.push({
+				SleeperUserId: sleeperId,
+				Manager: user.name
+			});
+         });
+
+		 jsonData.sort((a,b) => a.Manager.localeCompare(b.Manager)); // b - a for reverse sort
+
+		return jsonData;
+	};
+
+	/*
+		END USER AREA
+	*/
 
 	// Generate a basic html table from provided jsonData. Parent will be set to "container"
 	tools.generateTable = function (container, jsonData) {
@@ -456,24 +401,6 @@ SleeperTools = (function () {
 		container.appendChild(table) // Append the table to the container element
 	};
 
-	// Get a list of users from sleeper leagueId
-	tools.getUsers = async function (leagueId) {
-		const response = await fetch(getLeagueRestAPI(leagueId) + "/users")
-                .then((res) => res.json());
-
-		let jsonData = [];
-
-		response.forEach((item) => {
-            // Get the values of the current object in the JSON data
-			jsonData.push({
-				"Username": item.display_name,
-				"User ID": item.user_id
-			});
-         });
-
-		return jsonData;
-	};
-
 	// List of latest sleeper league and all previous sleeper league ids.
 	async function getSleeperLeagueIdsAndAllPreviousLeagueIds(){
 		var allSleeperLeagueIds = [];
@@ -505,51 +432,16 @@ SleeperTools = (function () {
 		return allSleeperLeagueIds;
 	}
 
-	// local function, prevents duplicates when retrieving all sleeper users in leagues.
-	function userJsonContains(a, obj) {
-		var i = a.length;
-		while (i--) {
-		   if (a[i].user_id === obj.user_id) {
-			   return true;
-		   }
-		}
-		return false;
-	}
-
-	async function getUsers_Unique(){
-		const response = await fetch(getLeagueRestAPI(tools.A_LEAGUE_SLEEPER_ID) + "/users")
-                .then((res) => res.json());
-
-		const response2 = await fetch(getLeagueRestAPI(tools.A_LEAGUE_SLEEPER_ID_2022_SEASON) + "/users")
-		.then((res) => res.json());
-
-		const response3 = await fetch(getLeagueRestAPI(tools.B_LEAGUE_SLEEPER_ID) + "/users")
-		.then((res) => res.json());
-		
-		response2.forEach((item) => {
-			if (!userJsonContains(response, item)){
-				response.push(item);
-			}
-        });
-		response3.forEach((item) => {
-            if (!userJsonContains(response, item)){
-				response.push(item);
-			}
-        });
-
-		return response;
-	}
-
 	// Get unique list of all users in both sleeper leagues for the GM List page.
 	tools.getGmList = async function () {
 		const users = await getUsers_Unique();
 
 		let jsonData = [];
 		users.forEach((item) => {
-			var atrURL = "<a href=\"b3fl.com/all-time-records/?user=" + item.user_id + "\">Record</a>";
-			var profileUrl = "<a href=\"b3fl.com/gm-profiles/?user=" + item.user_id + "\">Stats</a>";
+			var atrURL = "<a style=\"color:black;\" href=\"b3fl.com/all-time-records/?user=" + item.user_id + "\">Record</a>";
+			var profileUrl = "<a style=\"color:black;\" href=\"b3fl.com/gm-profiles/?user=" + item.user_id + "\">Stats</a>";
 
-			var user = getUserMetaData(item.user_id);
+			var user = getUserReal(item.user_id);
 
             // Get the values of the current object in the JSON data 
 			jsonData.push({
@@ -572,27 +464,6 @@ SleeperTools = (function () {
 							"<span style=\"color: #ccac02;\"><b>" + league + "</b></span>" : 
 							"<span>" + league + "</span>";
 	}
-
-	// Get unique list of all users in both sleeper leagues.
-	tools.getAllUserIds = async function () {
-		const users = await getUsers_Unique();
-
-		let jsonData = [];
-		users.forEach((item) => {
-			var sleeperId = item.user_id;
-			var user = getUserMetaData(sleeperId);
-
-            // Get the values of the current object in the JSON data
-			jsonData.push({
-				SleeperUserId: sleeperId,
-				Manager: user.name
-			});
-         });
-
-		 jsonData.sort((a,b) => a.Manager.localeCompare(b.Manager)); // b - a for reverse sort
-
-		return jsonData;
-	};
 
 	function groupAllRecordsByYear(allRecords){
 		var groupedRecords = { }; //json
@@ -991,8 +862,8 @@ SleeperTools = (function () {
 
 	// NFL.COM Records.
 	async function getMatchupsLegacy(sleeperId1, sleeperId2) {
-		var legacyId1 = userReals[sleeperId1].legacyId;
-		var legacyId2 = userReals[sleeperId2].legacyId;
+		var legacyId1 = getUserReal(sleeperId1).legacyId;
+		var legacyId2 = getUserReal(sleeperId2).legacyId;
 
 		const aLeagueLegacy = await tools.getLegacyChampLeagueData(); // JSON
 		const bLeagueLegacy = await tools.getLegacyOtherLeagueData(); // JSON
@@ -1100,7 +971,7 @@ SleeperTools = (function () {
 	}
 
 	async function getAllTimeRecordsLegacy(sleeperId) {
-		var legacyId = userReals[sleeperId].legacyId;
+		var legacyId = getUserReal(sleeperId).legacyId;
 
 		const aLeagueLegacy = await tools.getLegacyChampLeagueData(); // JSON
 		const bLeagueLegacy = await tools.getLegacyOtherLeagueData(); // JSON
