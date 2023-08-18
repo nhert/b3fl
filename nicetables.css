@@ -5,11 +5,14 @@ table {
     font-family: sans-serif;
     min-width: 400px;
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.15);
+    background-color: #ffffff;
+    text-align: left;
 }
 
-table thead tr {
+thead tr,
+table tr {
     background-color: #ffffff;
-    color: #ffffff;
+    color: #313131;
     text-align: left;
 }
 
@@ -27,7 +30,7 @@ table tbody tr {
     border-bottom: 1px solid #dddddd;
 }
 
- tr:nth-of-type(odd) {
+tr:nth-of-type(odd) {
     background-color: #c5c5c5;
 }
 

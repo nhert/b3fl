@@ -91,10 +91,14 @@
             var profile = dataToDisplay[0];
            
             // Refresh displayed stat totals
-            container.innerHTML += tagWith("Titles: " + profile.titles, "h2");
+            container.innerHTML += tagWith("Championships", "h2");
+            container.innerHTML += tagWith(profile.titles, "h3");
             container.innerHTML += "<br>";
-            container.innerHTML += tagWith("Best Season: " + profile.seasonBest, "h3");
-            container.innerHTML += tagWith("Worst Season: " + profile.seasonWorst, "h3");
+            container.innerHTML += tagWith("Best Season", "h2");
+            container.innerHTML += tagWith(profile.seasonBest, "h3");
+            container.innerHTML += "<br>";
+            container.innerHTML += tagWith("Worst Season", "h2");
+            container.innerHTML += tagWith(profile.seasonWorst, "h3");
             container.innerHTML += "<br>";
             container.innerHTML += tagWith("Avg Pts For: " + profile.avgPtsFor, "h5");
             container.innerHTML += tagWith("Avg Pts Against: " + profile.avgPtsAgainst, "h5");

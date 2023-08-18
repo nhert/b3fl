@@ -18,7 +18,7 @@ SleeperTools = (function () {
 		A_LEAGUE_NAME: "A League",
 		B_LEAGUE_NAME: "B League",
 
-		// Record correction constants
+		// Record correction constants for 2021/2022 since papa t shared team with jer
 		PAPA_T_SLEEPER_ID_RECORD_CORRECTION: "868693802389540864",
 		JER_SLEEPER_ID_RECORD_CORRECTION: "471702444481441792",
 		
@@ -159,6 +159,210 @@ SleeperTools = (function () {
 		}
 	}
 
+	var userReals2 = [
+		{
+			name: "Jer",
+			sleeperId_current: "471702444481441792",
+			sleeperIds_old: [],
+			legacyId: "userId-90093",
+			currentLeague: tools.constants.A_LEAGUE_NAME
+		},
+		{
+			name: "Nate",
+			sleeperId_current: "867462835893080064",
+			sleeperIds_old: [],
+			legacyId: "userId-27062481",
+			currentLeague: tools.constants.A_LEAGUE_NAME
+		},
+		{
+			name: "Caolan",
+			sleeperId_current: "867562511770255360",
+			sleeperIds_old: [],
+			legacyId: "userId-95527",
+			currentLeague: tools.constants.A_LEAGUE_NAME
+		},
+		{
+			name: "Dalley",
+			sleeperId_current: "867601213447897088",
+			sleeperIds_old: [],
+			legacyId: "userId-91161",
+			currentLeague: tools.constants.A_LEAGUE_NAME
+		},
+		{
+			name: "Rimon",
+			sleeperId_current: "869618771407556608",
+			sleeperIds_old: [],
+			legacyId: "userId-91908",
+			currentLeague: tools.constants.A_LEAGUE_NAME
+		},
+		{
+			name: "Omar",
+			sleeperId_current: "441653692567908352",
+			sleeperIds_old: [],
+			legacyId: "userId-5318397",
+			currentLeague: tools.constants.B_LEAGUE_NAME
+		},
+		{
+			name: "Ricky",
+			sleeperId_current: "471826036959473664",
+			sleeperIds_old: [],
+			legacyId: "userId-27845667",
+			currentLeague: tools.constants.A_LEAGUE_NAME
+		},
+		{
+			name: "Alex",
+			sleeperId_current: "731243643578490880",
+			sleeperIds_old: [],
+			legacyId: "userId-19416897",
+			currentLeague: tools.constants.B_LEAGUE_NAME
+		},
+		{
+			name: "Picco",
+			sleeperId_current: "865480383385448448",
+			sleeperIds_old: [],
+			legacyId: "userId-28536059",
+			currentLeague: tools.constants.B_LEAGUE_NAME
+		},
+		{
+			name: "Jordan S.",
+			sleeperId_current: "865596427626201088",
+			sleeperIds_old: [],
+			legacyId: "userId-130280",
+			currentLeague: tools.constants.B_LEAGUE_NAME
+		},
+		{
+			name: "Eric",
+			sleeperId_current: "866400340310917120",
+			sleeperIds_old: [],
+			legacyId: "userId-144377",
+			currentLeague: tools.constants.A_LEAGUE_NAME
+		},
+		{
+			name: "Tom",
+			sleeperId_current: "867272838229454848",
+			sleeperIds_old: [],
+			legacyId: "userId-14712314",
+			currentLeague: tools.constants.B_LEAGUE_NAME
+		},
+		{
+			name: "Ryan",
+			sleeperId_current: "867294931482505216",
+			sleeperIds_old: [],
+			legacyId: "userId-25196559",
+			currentLeague: tools.constants.B_LEAGUE_NAME
+		},
+		{
+			name: "Jordan I.",
+			sleeperId_current: "867433255367008256",
+			sleeperIds_old: [],
+			legacyId: "userId-13060178",
+			currentLeague: tools.constants.B_LEAGUE_NAME
+		},
+		{
+			name: "Liam",
+			sleeperId_current: "867479730138583040",
+			sleeperIds_old: [],
+			legacyId: "userId-25169661",
+			currentLeague: tools.constants.B_LEAGUE_NAME
+		},
+		{
+			name: "Mike",
+			sleeperId_current: "867489506998267904",
+			sleeperIds_old: [],
+			legacyId: "userId-7530198",
+			currentLeague: tools.constants.A_LEAGUE_NAME
+		},
+		{
+			name: "Zack",
+			sleeperId_current: "867531909708840960",
+			sleeperIds_old: [],
+			legacyId: "userId-5280198",
+			currentLeague: tools.constants.A_LEAGUE_NAME
+		},
+		{
+			name: "Scott",
+			sleeperId_current: "867587986001403904",
+			sleeperIds_old: [],
+			legacyId: "userId-5339416",
+			currentLeague: tools.constants.A_LEAGUE_NAME
+		},
+		{
+			name: "Jake",
+			sleeperId_current: "867593986880229376",
+			sleeperIds_old: [],
+			legacyId: "userId-90171",
+			currentLeague: tools.constants.A_LEAGUE_NAME
+		},
+		{
+			name: "Tikl",
+			sleeperId_current: "867598805816795136",
+			sleeperIds_old: [],
+			legacyId: "userId-7830798",
+			currentLeague: tools.constants.A_LEAGUE_NAME
+		},
+		{
+			name: "Marty",
+			sleeperId_current: "867970353417363456",
+			sleeperIds_old: [],
+			legacyId: "userId-962198",
+			currentLeague: tools.constants.A_LEAGUE_NAME
+		},
+		{
+			name: "Ty",
+			sleeperId_current: "867598396356259840",
+			sleeperIds_old: [],
+			legacyId: "userId-14721116",
+			currentLeague: tools.constants.B_LEAGUE_NAME
+		},
+		{
+			name: "Papa T",
+			sleeperId_current: "868693802389540864",
+			sleeperIds_old: [],
+			legacyId: "userId-90093",
+			currentLeague: tools.constants.A_LEAGUE_NAME
+		},
+		{
+			name: "Dan",
+			sleeperId_current: "868705613276925952",
+			sleeperIds_old: [],
+			legacyId: "userId-7401235",
+			currentLeague: tools.constants.B_LEAGUE_NAME
+		}
+	]
+
+	var dummyUser = {
+		name: "User Not Found",
+		sleeperId_current: "-",
+		sleeperIds_old: [],
+		legacyId: "-",
+		currentLeague: "None"
+	}
+
+	function getUserMetaData(sleeperId) {
+		if (!userReals[sleeperId]){
+			return dummyUser;
+		} else {
+			return userReals[sleeperId];
+		}
+	}
+
+	tools.doesUserExist = function (sleeperId) {
+		return userReals[sleeperId] != null;
+	}
+
+	function getUserReal(sleeperId){
+		for (let i = 0; i < userReals2.length; i++) {
+			if (userReals2[i].sleeperId_current == sleeperId || userReals2[i].sleeperIds_old.includes(sleeperId)){
+				return userReals2[i];
+			}
+		}
+		return dummyUser;
+	}
+
+	tools.doesUserRealExist = function (sleeperId) {
+		return getUserReal(sleeperId) != dummyUser;
+	}
+
 	// Generate a basic html table from provided jsonData. Parent will be set to "container"
 	tools.generateTable = function (container, jsonData) {
 		if (!jsonData[0]) return;
@@ -202,7 +406,7 @@ SleeperTools = (function () {
 		container.appendChild(table) // Append the table to the container element
 	};
 
-	tools.generateGmListTable = function (container, jsonData) {
+	tools.generateTableWithColumnWidth = function (container, jsonData, minColumnWidths) {
 		if (!jsonData[0]) return;
 
 		// Create the table element
@@ -231,17 +435,19 @@ SleeperTools = (function () {
 		   // Get the values of the current object in the JSON data
 		   let vals = Object.values(item);
 
-		   let first = true;
-		   
+		   minColIndex = 0;
 		   // Loop through the values and create table cells
 		   vals.forEach((elem) => {
 				let td = document.createElement("td");
-				if(first){
-					first = false;
-					td.setAttribute("style", "min-width:80px;");
+
+				let colWidth = minColumnWidths[minColIndex];
+				if (colWidth){
+					td.setAttribute("style", "min-width:" + colWidth + "px;");
 				}
-			  td.innerHTML = elem; // Set the value as the text of the table cell
-			  tr.appendChild(td); // Append the table cell to the table row
+				minColIndex++;
+
+			  	td.innerHTML = elem; // Set the value as the text of the table cell
+			  	tr.appendChild(td); // Append the table cell to the table row
 		   });
 		   table.appendChild(tr); // Append the table row to the table
 		});
@@ -267,10 +473,6 @@ SleeperTools = (function () {
 
 		return jsonData;
 	};
-
-	tools.doesUserExist = function (sleeperId) {
-		return userReals[sleeperId] != null;
-	}
 
 	// List of latest sleeper league and all previous sleeper league ids.
 	async function getSleeperLeagueIdsAndAllPreviousLeagueIds(){
@@ -345,16 +547,18 @@ SleeperTools = (function () {
 		let jsonData = [];
 		users.forEach((item) => {
 			var atrURL = "<a href=\"b3fl.com/all-time-records/?user=" + item.user_id + "\">Record</a>";
-			var profileUrl = "<a href=\"b3fl.com/gm-profiles/?user=" + item.user_id + "\">Profile</a>";
+			var profileUrl = "<a href=\"b3fl.com/gm-profiles/?user=" + item.user_id + "\">Stats</a>";
+
+			var user = getUserMetaData(item.user_id);
 
             // Get the values of the current object in the JSON data 
 			jsonData.push({
 				"": "<img src=\"https://sleepercdn.com/avatars/" + item.avatar + "\" alt=\"Player Avatar\"></img>",
 				"Sleeper Name": item.display_name,
-				"Manager": userReals[item.user_id].name,
-				"League": beautifyLeagueField(userReals[item.user_id].currentLeague),
+				"Manager": user.name,
+				"League": beautifyLeagueField(user.currentLeague),
 				"All Time Record": atrURL,
-				"Profile": profileUrl
+				"Stats": profileUrl
 			});
          });
 
@@ -366,7 +570,7 @@ SleeperTools = (function () {
 	function beautifyLeagueField(league){
 		return league == tools.constants.A_LEAGUE_NAME ? 
 							"<span style=\"color: #ccac02;\"><b>" + league + "</b></span>" : 
-							"<span style=\"color: #969696;\"><b>" + league + "</b></span>";
+							"<span>" + league + "</span>";
 	}
 
 	// Get unique list of all users in both sleeper leagues.
@@ -376,10 +580,12 @@ SleeperTools = (function () {
 		let jsonData = [];
 		users.forEach((item) => {
 			var sleeperId = item.user_id;
+			var user = getUserMetaData(sleeperId);
+
             // Get the values of the current object in the JSON data
 			jsonData.push({
 				SleeperUserId: sleeperId,
-				Manager: userReals[sleeperId].name
+				Manager: user.name
 			});
          });
 

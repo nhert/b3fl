@@ -12,7 +12,9 @@
 
               container.innerHTML += "<h3>Players</h3>";
               data = await SleeperTools.getGmList();
-              SleeperTools.generateGmListTable(container, data);
+
+              let colWidths = [80, 100, 100, 110, 40, 40];
+              SleeperTools.generateTableWithColumnWidth(container, data, colWidths);
 
             } else {
               console.log("No sleeper tools.");

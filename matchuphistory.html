@@ -4,17 +4,23 @@
     <h4>View your historical matchups against other managers</h4>
     <h5><i>This tool includes all historical games against the opponent, even games played after playoff elimination.</i></h5>
     <div style="margin:20px auto; display: block;">
+        <select id="ownerLeft"></select>
+        <span><b> Against </b></span>
+        <select id="ownerRight"></select>
+    </div>
+    <div style="margin:20px auto; display: block;">
         <label for="timespan">Timespan</label>
         <select id="timespan">
             <option value="all">All Time</option>
             <option value="sleeperOnly">Sleeper Era</option>
             <option value="legacyOnly">NFL.com Era</option>
         </select>
-    </div>
-    <div style="margin:20px auto; display: block;">
-        <select id="ownerLeft"></select>
-        <span><b> Against </b></span>
-        <select id="ownerRight"></select>
+        <label for="leagueType">League</label>
+        <select id="leagueType">
+            <option value="all">All Leagues</option>
+            <option value="A League">A League</option>
+            <option value="B League">B League</option>
+        </select>
     </div>
     <br>
 
@@ -27,6 +33,7 @@
         var container = document.getElementById("pageTableDiv");
         var spinner = document.getElementById("spinner");
         var timespanDropdown = document.getElementById("timespan");
+        var leagueTypeDropdown = document.getElementById("leagueType");
         var ownerLeftDropdown = document.getElementById("ownerLeft");
         var ownerRightDropdown = document.getElementById("ownerRight");
         var currentMatchupData;
@@ -36,22 +43,13 @@
             timespanDropdown.disabled = isLoading;
             ownerLeftDropdown.disabled = isLoading;
             ownerRightDropdown.disabled = isLoading;
+            leagueTypeDropdown.disabled = isLoading;
         }
 
         function buildAllRecordsIntoCombined(records){
             var wins = 0, losses = 0, ties = 0;
 
-            var toDisplay;
-            if (timespanDropdown.value == "all"){
-                toDisplay = records;
-            } else {
-                var typeCheck = timespanDropdown.value == "legacyOnly" ? "NFL.com" : "Sleeper";
-                toDisplay = records.filter(obj => {
-                                                    return obj.type === typeCheck
-                                                })
-            }
-
-            toDisplay.forEach(record => {
+            records.forEach(record => {
                 if (record.outcome == "win"){
                     wins++;
                 } else if (record.outcome == "loss"){
@@ -128,6 +126,13 @@
                                                         })
             }
 
+            if (leagueTypeDropdown.value != "all"){
+                var typeCheck = leagueTypeDropdown.value;
+                dataToDisplay = dataToDisplay.filter(obj => {
+                                                        return obj.league_type === typeCheck
+                                                        })
+            }
+
             // Refresh displayed stat totals
             container.innerHTML = "";
             container.innerHTML += "<h1 style=\"margin:0 auto; text-align: center;\"><b>" + buildAllRecordsIntoCombined(dataToDisplay) + "</b></h1><br>";
@@ -157,6 +162,11 @@
                 });
 
                 timespanDropdown.addEventListener(
+                    'change',
+                    function() {  refreshTable(); },
+                    false
+                );
+                leagueTypeDropdown.addEventListener(
                     'change',
                     function() {  refreshTable(); },
                     false

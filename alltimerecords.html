@@ -3,16 +3,22 @@
 <body>
     <h4>View your all time record in the B3FL</h4>
     <div style="margin:20px auto; display: block;">
+        <label for="owner">Manager</label>
+        <select id="owner"></select>
+    </div>
+    <div style="margin:20px auto; display: block;">
         <label for="timespan">Timespan</label>
         <select id="timespan">
             <option value="all">All Time</option>
             <option value="sleeperOnly">Sleeper Era</option>
             <option value="legacyOnly">NFL.com Era</option>
         </select>
-    </div>
-    <div style="margin:20px auto; display: block;">
-        <label for="owner">Manager</label>
-        <select id="owner"></select>
+        <label for="leagueType">League</label>
+        <select id="leagueType">
+            <option value="all">All Leagues</option>
+            <option value="A League">A League</option>
+            <option value="B League">B League</option>
+        </select>
     </div>
     <div style="margin:20px auto; display: block;">
         <label for="showPostElimPlayoffGames">Include games played after being eliminated from playoffs</label>
@@ -30,6 +36,7 @@
         var spinner = document.getElementById("spinner");
         var timespanDropdown = document.getElementById("timespan");
         var ownerDropdown = document.getElementById("owner");
+        var leagueTypeDropdown = document.getElementById("leagueType");
         var postElimPlayoffsCheckbox = document.getElementById("showPostElimPlayoffGames");
         var currentAllTimeData;
 
@@ -38,6 +45,7 @@
             timespanDropdown.disabled = isLoading;
             ownerDropdown.disabled = isLoading;
             postElimPlayoffsCheckbox.disabled = isLoading;
+            leagueTypeDropdown.disabled = isLoading;
         }
 
         function buildAllRecordsIntoCombined(records){
@@ -121,6 +129,13 @@
                                                         })
             }
 
+            if (leagueTypeDropdown.value != "all"){
+                var typeCheck = leagueTypeDropdown.value;
+                dataToDisplay = dataToDisplay.filter(obj => {
+                                                        return obj.league_type === typeCheck
+                                                        })
+            }
+
             if (!postElimPlayoffsCheckbox.checked){
                 dataToDisplay = dataToDisplay.filter(obj => {
                                                         return obj.game_type != "PlayoffPostElimination"
@@ -169,6 +184,11 @@
 
                 // This will filter loaded data
                 timespanDropdown.addEventListener(
+                    'change',
+                    function() {  refreshTable(); },
+                    false
+                );
+                leagueTypeDropdown.addEventListener(
                     'change',
                     function() {  refreshTable(); },
                     false
